@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/res/merged/androidTest/debug/menu/web_view.xml",
+        "source": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/bundles/debug/res/menu/web_view.xml"
+    },
+    {
+        "merged": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/res/merged/androidTest/debug/menu/main.xml",
+        "source": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/bundles/debug/res/menu/main.xml"
+    }
+]

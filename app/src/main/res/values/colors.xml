@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#2196F3</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="primary_light">#BBDEFB</color>
+    <color name="accent">#FF4081</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="divider">#B6B6B6</color>
+
+    <color name="lightGrey">#e0e0e0</color>
+    <color name="grey">#c8c8c8</color>
+    <color name="grey500">#9e9e9e</color>
+    <color name="black87">#2C2C2C</color>
+
+    <color name="transparent">#00000000</color>
+
+    <!-- Grey -->
+    <color name="grey_200">#eeeeee</color>
+    <color name="grey_400">#bdbdbd</color>
+
+    <color name="nav_drawer_row_item_unselected">@color/transparent</color>
+    <color name="nav_drawer_row_item_selected">@color/grey_200</color>
+    <color name="nav_drawer_row_item_pressed">@color/grey_400</color>
+
+    <!--File picker colors-->
+    <color name="daidalos_backgroud">#000</color>
+    <color name="daidalos_active_file">#fff</color>
+    <color name="daidalos_inactive_file">#888</color>
+</resources>

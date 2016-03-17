@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="markButton" type="id" />
+    <item name="debugButton1" type="id" />
+    <item name="debug2" type="id">8082</item>
+    <item name="navPoints" type="id">8080</item>
+</resources>

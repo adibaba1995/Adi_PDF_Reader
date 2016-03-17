@@ -1,0 +1,3 @@
+include ':app', ':mupdf'
+include ':ePub3Library'
+include ':sDKLauncherAndroid'
