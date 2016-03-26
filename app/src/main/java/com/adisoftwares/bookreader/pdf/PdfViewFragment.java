@@ -20,8 +20,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
@@ -142,6 +144,8 @@ public class PdfViewFragment extends Fragment implements FilePicker.FilePickerSu
     private String path;
 
     private ActionMode copyActionMode;
+
+    private ShareActionProvider mShareActionProvider;
 
     static public AlertDialog.Builder getAlertBuilder() {
         return gAlertBuilder;
@@ -331,8 +335,6 @@ public class PdfViewFragment extends Fragment implements FilePicker.FilePickerSu
             case R.id.copy:
                 mDocView.setMode(MuPDFReaderView.Mode.Selecting);
                 showInfo(getString(R.string.select_text));
-                if(copyActionMode != null)
-                    return false;
                 CopyActionModeCallback callback = new CopyActionModeCallback();
                 copyActionMode = ((AppCompatActivity)getActivity()).startSupportActionMode(callback);
                 copyActionMode.setTitle("Copy");
@@ -1503,6 +1505,8 @@ public class PdfViewFragment extends Fragment implements FilePicker.FilePickerSu
 
     public class CopyActionModeCallback implements ActionMode.Callback {
 
+        private Intent mShareIntent;
+
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             mode.getMenuInflater().inflate(R.menu.copy, menu);
@@ -1525,7 +1529,19 @@ public class PdfViewFragment extends Fragment implements FilePicker.FilePickerSu
                         success = pageView.copySelection();
                     mTopBarMode = TopBarMode.More;
                     showInfo(success ? getString(R.string.copied_to_clipboard) : getString(R.string.no_text_selected));
+                    mDocView.setMode(MuPDFReaderView.Mode.Viewing);
                     return true;
+                case R.id.action_share:
+                    mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+                    mShareIntent = new Intent();
+                    mShareIntent.setAction(Intent.ACTION_SEND);
+                    mShareIntent.setType("text/plain");
+                    String selection = ((MuPDFView)mDocView.getDisplayedView()).getSelection();
+                    if(selection != null)
+                        mShareIntent.putExtra(Intent.EXTRA_TEXT, ((MuPDFView)mDocView.getDisplayedView()).getSelection());
+                    else
+                        showInfo(getString(R.string.no_text_selected));
+                    break;
             }
 
             return false;
@@ -1533,7 +1549,7 @@ public class PdfViewFragment extends Fragment implements FilePicker.FilePickerSu
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-
+            mDocView.setMode(MuPDFReaderView.Mode.Viewing);
         }
     }
 

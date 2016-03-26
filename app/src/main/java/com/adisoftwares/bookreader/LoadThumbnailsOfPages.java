@@ -11,7 +11,7 @@ import com.artifex.mupdfdemo.MuPDFCore;
 /**
  * Created by adityathanekar on 28/02/16.
  */
-public class LoadThumbnailsOfPages extends BitmapLoader {
+public class LoadThumbnailsOfPages extends MemoryBitmapLoader {
     private static LoadThumbnailsOfPages pageThumbnailLoader;
     private MuPDFCore mCore;
     private Context mContext;

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.adisoftwares.bookreader.BookData;
+import com.artifex.mupdfdemo.MuPDFCore;
 
 /**
  * Created by adityathanekar on 06/02/16.

@@ -11,6 +11,8 @@ public abstract class BookData {
 
     private String path;
 
+    private String bookName;
+
     public abstract Bitmap getThumbnail(int width, int height);
 
     public BookData(String path) {
@@ -31,5 +33,13 @@ public abstract class BookData {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getBookName() {
+        return bookName;
+    }
+
+    public void setBookName(String bookName) {
+        this.bookName = bookName;
     }
 }

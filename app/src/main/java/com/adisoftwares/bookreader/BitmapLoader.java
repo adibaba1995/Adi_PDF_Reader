@@ -10,12 +10,13 @@ import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
 
+
 /**
  * Created by adityathanekar on 28/02/16.
  */
 public abstract class BitmapLoader {
 
-    protected LruCache<String, Bitmap> mLruCache;
+    protected BitmapLruCache mCache;
 
     class BitmapLoaderTask extends AsyncTask<String, Void, Bitmap> {
         private String url;
@@ -58,12 +59,20 @@ public abstract class BitmapLoader {
 
     public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
         if (getBitmapFromMemCache(key) == null) {
-            mLruCache.put(key, bitmap);
+//            mLruCache.put(key, bitmap);
+            mCache.put(key, bitmap);
         }
     }
 
     public Bitmap getBitmapFromMemCache(String key) {
-        return mLruCache.get(key);
+//        return mLruCache.get(key);
+        Bitmap bitmap;
+        CacheableBitmapDrawable drawable = mCache.get(key);
+        if(drawable == null)
+            bitmap = null;
+        else
+            bitmap = mCache.get(key).getBitmap();
+        return bitmap;
     }
 
 
@@ -86,7 +95,7 @@ public abstract class BitmapLoader {
             BitmapLoaderTask task = new BitmapLoaderTask(imageView, width, height, position, data);
             DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task);
             imageView.setImageDrawable(downloadedDrawable);
-            task.execute();
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 

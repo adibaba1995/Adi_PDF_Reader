@@ -14,12 +14,12 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:id="@+id/webview"/>
-    
+
     <LinearLayout android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/navigation">
-        
+
         <Button
             android:id="@+id/left"
             android:layout_width="0dp"

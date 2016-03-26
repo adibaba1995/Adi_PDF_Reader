@@ -13,6 +13,7 @@ public interface MuPDFView {
 	public void selectText(float x0, float y0, float x1, float y1);
 	public void deselectText();
 	public boolean copySelection();
+	public String getSelection();
 	public boolean markupSelection(Annotation.Type type);
 	public void deleteSelectedAnnotation();
 	public void setSearchBoxes(RectF searchBoxes[]);

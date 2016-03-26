@@ -3,6 +3,7 @@ package com.adisoftwares.bookreader;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -40,6 +41,12 @@ public class BookGridFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Bind(R.id.books_recycler_view)
     AutofitRecyclerView recyclerView;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Nullable
     @Override
@@ -92,11 +99,10 @@ public class BookGridFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri uri = MediaStore.Files.getContentUri("external");
-        Log.d("Aditya", uri.toString());
 
         String[] projection = null;
 
-        String sortOrder = null;
+        String sortOrder = Files.FileColumns.DATA + " ASC";
 
         String selection = Files.FileColumns.DATA + " LIKE ?  OR " + Files.FileColumns.DATA + " LIKE ?";
         //String selection = Files.FileColumns.DATA + " LIKE ?";
@@ -111,22 +117,22 @@ public class BookGridFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        BookData bookData;
-        while (data.moveToNext()) {
-            bookData = null;
-            try {
-                Log.d("Aditya", data.getString(data.getColumnIndex(Files.FileColumns.DATA)));
-                if (data.getString(data.getColumnIndex(Files.FileColumns.DATA)).endsWith(".pdf"))
-                    bookData = new PDFBookData(data.getString(data.getColumnIndex(Files.FileColumns.DATA)), getActivity());
-                //else
-                //bookData = new EpubBookData(data.getString(data.getColumnIndex(Files.FileColumns.DATA)), getActivity());
-                bookData.setId(data.getLong(data.getColumnIndex(Files.FileColumns._ID)));
-                booksList.add(bookData);
-            } catch (Exception e) {
-                Log.d("Aditya", e.toString());
-            }
-        }
-        adapter.notifyDataSetChanged();
+//        BookData bookData;
+//        while (data.moveToNext()) {
+//            bookData = null;
+//            try {
+//                if (data.getString(data.getColumnIndex(Files.FileColumns.DATA)).endsWith(".pdf"))
+//                    bookData = new PDFBookData(data.getString(data.getColumnIndex(Files.FileColumns.DATA)), getActivity());
+//                else if (data.getString(data.getColumnIndex(Files.FileColumns.DATA)).endsWith(".epub"))
+//                    bookData = new EpubBookData(data.getString(data.getColumnIndex(Files.FileColumns.DATA)), getActivity());
+//                bookData.setId(data.getLong(data.getColumnIndex(Files.FileColumns._ID)));
+//                booksList.add(bookData);
+//            } catch (Exception e) {
+//                Log.d("Aditya", e.toString());
+//            }
+//        }
+//        adapter.notifyDataSetChanged();
+        new BookLoaderTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, data);
     }
 
     @Override
@@ -138,5 +144,35 @@ public class BookGridFragment extends Fragment implements LoaderManager.LoaderCa
     public void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
+    }
+
+    public class BookLoaderTask extends AsyncTask<Cursor, Integer, Void> {
+
+        @Override
+        protected Void doInBackground(Cursor... params) {
+            BookData bookData;
+            Cursor data = params[0];
+            while (data.moveToNext()) {
+                bookData = null;
+                try {
+                    if (data.getString(data.getColumnIndex(Files.FileColumns.DATA)).endsWith(".pdf"))
+                        bookData = new PDFBookData(data.getString(data.getColumnIndex(Files.FileColumns.DATA)), getActivity());
+                    else if (data.getString(data.getColumnIndex(Files.FileColumns.DATA)).endsWith(".epub"))
+                        bookData = new EpubBookData(data.getString(data.getColumnIndex(Files.FileColumns.DATA)), getActivity());
+                    bookData.setId(data.getLong(data.getColumnIndex(Files.FileColumns._ID)));
+                    booksList.add(bookData);
+                    publishProgress(booksList.size() - 1);
+                } catch (Exception e) {
+                    Log.d("Aditya", e.toString());
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            adapter.notifyItemInserted(values[0]);
+        }
     }
 }

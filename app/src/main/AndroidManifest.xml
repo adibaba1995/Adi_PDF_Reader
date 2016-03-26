@@ -7,10 +7,12 @@
     <uses-permission android:name="android.permission.STORAGE" />
 
     <application
+        android:name=".BookReaderApplication"
         android:allowBackup="true"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:largeHeap="true">
 
         <activity android:name=".NavigationViewActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -41,6 +43,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ImageViewerActivity" />
 
     </application>
 

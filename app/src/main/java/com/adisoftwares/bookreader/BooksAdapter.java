@@ -73,7 +73,7 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BooksViewHol
             public void run() {
                 //holder.thumbnail.setImageBitmap(bookData.getThumbnail(holder.thumbnail.getMeasuredWidth(), holder.thumbnail.getMeasuredHeight()));
                 //new BitmapLoaderTask(holder.thumbnail, holder.thumbnail.getMeasuredWidth(), holder.thumbnail.getMeasuredHeight(), bookData).execute();
-                    LoadBookImage.get().loadBitmap(bookData.getPath(), holder.thumbnail, holder.thumbnail.getWidth(), holder.thumbnail.getHeight(), 0, bookData);
+                LoadBookImage.get().loadBitmap(bookData.getPath(), holder.thumbnail, holder.thumbnail.getWidth(), holder.thumbnail.getHeight(), 0, bookData);
             }
         });
     }

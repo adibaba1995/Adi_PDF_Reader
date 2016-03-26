@@ -1,6 +1,7 @@
 package com.adisoftwares.bookreader.epub;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
@@ -23,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
+import android.webkit.JsResult;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceResponse;
@@ -31,8 +33,10 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.adisoftwares.bookreader.ImageViewerActivity;
 import com.adisoftwares.bookreader.R;
 
 import org.json.JSONException;
@@ -78,6 +82,9 @@ public class EpubFragment extends Fragment implements ViewerSettingsDialog.OnVie
     // Installs "hook" function so that top-level window (application) can later
     // inject the window.navigator.epubReadingSystem into this HTML document's
     // iframe
+
+    private static final String CLICK_IMAGE_JAVASCRIPT = "document.addEventListener(\"click\", function(event) { var t = event.target; while (t && t !== this) { if (t.matches(\"img\")) { alert(t.src); } t = t.parentNode; } });";
+
     private static final String INJECT_EPUB_RSO_SCRIPT_1 = ""
             + "window.readium_set_epubReadingSystem = function (obj) {"
             + "\nwindow.navigator.epubReadingSystem = obj;"
@@ -131,6 +138,8 @@ public class EpubFragment extends Fragment implements ViewerSettingsDialog.OnVie
     // Location of payloads in the asset folder
     private static final String PAYLOAD_MATHJAX_ASSET = "reader-payloads/MathJax.js";
     private static final String PAYLOAD_ANNOTATIONS_CSS_ASSET = "reader-payloads/annotations.css";
+
+    float x,y;
 
     private final EpubServer.DataPreProcessor dataPreProcessor = new EpubServer.DataPreProcessor() {
 
@@ -327,6 +336,7 @@ public class EpubFragment extends Fragment implements ViewerSettingsDialog.OnVie
         mWebview.setWebChromeClient(new EpubWebChromeClient());
 
         mWebview.addJavascriptInterface(new EpubInterface(), "LauncherUI");
+        mWebview.addJavascriptInterface(new JsInterface(getActivity()), "imageClick");
     }
 
     @Override
@@ -429,7 +439,40 @@ public class EpubFragment extends Fragment implements ViewerSettingsDialog.OnVie
                 break;
         }
 
+        //In response to the picture on the web click event by wenview touch
+        float density = getResources().getDisplayMetrics().density; //Screen density
+        float touchX = event.getX() / density;  //Must be divided by the density of the screen
+        float touchY = event.getY() / density;
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            x = touchX;
+            y = touchY;
+        }
+
+        if(event.getAction() == MotionEvent.ACTION_UP){
+            float dx = Math.abs(touchX-x);
+            float dy = Math.abs(touchY-y);
+            if(dx<10.0/density&&dy<10.0/density){
+                clickImage(touchX,touchY);
+            }
+        }
         return false;
+    }
+
+    private void clickImage(float touchX, float touchY) {
+        //Through the touch position to get a picture of URL
+        String js = "javascript:(function(){" +
+                "var temp = document.elementFromPoint("+touchX+","+touchY+");"
+                +"var doc = temp.contentDocument? temp.contentDocument: temp.contentWindow.document;"
+                +"var  obj=doc.elementFromPoint("+touchX+","+touchY+");"
+                +"if(obj != null){"+ " window.imageClick.click(obj.src);}" +
+                "})()";
+
+//        String js = "javascript:(function(){" +
+//                "var temp = document.elementFromPoint("+touchX+", "+touchY+");"
+//                +"if(temp.tagName.toLowerCase() === \"img\") {"
+//                +"alert(temp.src); }"
+//                +"})()";
+        mWebview.loadUrl(js);
     }
 
     public final class EpubWebViewClient extends WebViewClient {
@@ -447,6 +490,7 @@ public class EpubFragment extends Fragment implements ViewerSettingsDialog.OnVie
         public void onPageFinished(WebView view, String url) {
             if (!quiet)
                 Log.d(TAG, "onPageFinished: " + url);
+            view.loadUrl("JavaScript:" + CLICK_IMAGE_JAVASCRIPT);
         }
 
         @Override
@@ -457,8 +501,18 @@ public class EpubFragment extends Fragment implements ViewerSettingsDialog.OnVie
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
             if (!quiet)
                 Log.d(TAG, "shouldOverrideUrlLoading: " + url);
+            view.addJavascriptInterface(new Object()
+            {
+                @JavascriptInterface
+                public void performClick() throws Exception
+                {
+                    Log.d("LOGIN::", "Clicked");
+                    Toast.makeText(getActivity(), "Login clicked", Toast.LENGTH_LONG).show();
+                }
+            }, "image");
             return false;
         }
 
@@ -711,6 +765,12 @@ public class EpubFragment extends Fragment implements ViewerSettingsDialog.OnVie
         }
 
         @Override
+        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+            return super.onJsAlert(view, url, message, result);
+        }
+
+        @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
 
             Log.e(TAG, "MediaPlayer onError: " + what + ", " + extra);
@@ -842,6 +902,21 @@ public class EpubFragment extends Fragment implements ViewerSettingsDialog.OnVie
             });
         }
 
+    }
+
+    class JsInterface {
+        Context context;
+        public JsInterface(Context context){
+            this.context = context;
+        }
+
+        @JavascriptInterface
+        public void click(String url){
+            Intent intent = new Intent(getActivity(), ImageViewerActivity.class);
+            intent.putExtra(ImageViewerActivity.EXTRA_IMAGE_PATH, url);
+            startActivity(intent);
+            Toast.makeText(getActivity(), url, Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
