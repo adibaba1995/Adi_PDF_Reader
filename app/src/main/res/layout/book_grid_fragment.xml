@@ -1,16 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey500">
 
-    <com.adisoftwares.bookreader.AutofitRecyclerView
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <com.adisoftwares.bookreader.view.AutofitRecyclerView
         android:id="@+id/books_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:columnWidth="@dimen/column_width"
-        android:clipToPadding="false"
-        android:paddingTop="?attr/actionBarSize"
-        android:layout_marginLeft="@dimen/grid_margin"/>
+        android:layout_marginLeft="@dimen/grid_margin"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-</FrameLayout>
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/routines_recycler_view"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"/>-->
+
+</android.support.design.widget.CoordinatorLayout>

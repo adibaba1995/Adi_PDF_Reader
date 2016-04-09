@@ -7,9 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 
-import com.adisoftwares.bookreader.AutofitRecyclerView;
+import com.adisoftwares.bookreader.view.AutofitRecyclerView;
 import com.adisoftwares.bookreader.R;
 import com.artifex.mupdfdemo.MuPDFCore;
 

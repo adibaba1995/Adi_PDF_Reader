@@ -40,12 +40,12 @@
         "source": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/src/main/res/layout/book_marks.xml"
     },
     {
-        "merged": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/res/merged/release/layout/viewer_settings.xml",
-        "source": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/src/main/res/layout/viewer_settings.xml"
-    },
-    {
         "merged": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/res/merged/release/layout/book_item.xml",
         "source": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/src/main/res/layout/book_item.xml"
+    },
+    {
+        "merged": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/res/merged/release/layout/viewer_settings.xml",
+        "source": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/src/main/res/layout/viewer_settings.xml"
     },
     {
         "merged": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/res/merged/release/layout/book_data.xml",

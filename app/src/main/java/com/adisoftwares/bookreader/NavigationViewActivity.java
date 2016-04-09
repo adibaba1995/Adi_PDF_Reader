@@ -6,13 +6,12 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.adisoftwares.bookreader.file_chooser.FileChooserFragment;
+import com.adisoftwares.bookreader.file_chooser.DirectoryFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,10 +26,6 @@ public class NavigationViewActivity extends AppCompatActivity implements Navigat
 
     @Bind(R.id.DrawerLayout)
     DrawerLayout drawerLayout;
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
-
-    private ActionBarDrawerToggle drawerToggle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,16 +34,9 @@ public class NavigationViewActivity extends AppCompatActivity implements Navigat
         setContentView(R.layout.activity_navigation_view);
 
         ButterKnife.bind(this);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.hamburger);
         initNavigationView();
 
         FragmentManager fm = getSupportFragmentManager();
-
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer);
-        drawerLayout.setDrawerListener(drawerToggle);
 
         if (savedInstanceState == null) {
             Fragment fragment = new BookGridFragment();
@@ -72,18 +60,23 @@ public class NavigationViewActivity extends AppCompatActivity implements Navigat
     @Override
     public void onPostCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onPostCreate(savedInstanceState, persistentState);
-        drawerToggle.syncState();
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int itemId = item.getItemId();
+        Fragment fragment;
         switch (itemId) {
             case R.id.folder:
-                FileChooserFragment fragment = new FileChooserFragment();
+                fragment = new DirectoryFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
-                return true;
+                break;
+            case R.id.books:
+                fragment = new BookGridFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+                break;
         }
-        return false;
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

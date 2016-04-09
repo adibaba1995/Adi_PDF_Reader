@@ -11,6 +11,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +23,9 @@ import com.adisoftwares.bookreader.epub.EpubActivity;
 import com.adisoftwares.bookreader.epub.EpubBookData;
 import com.adisoftwares.bookreader.pdf.PDFBookData;
 import com.adisoftwares.bookreader.pdf.PdfViewActivity;
-import com.artifex.mupdfdemo.MuPDFActivity;
+import com.adisoftwares.bookreader.view.AutofitRecyclerView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -33,19 +36,31 @@ import butterknife.ButterKnife;
  */
 public class BookGridFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String BOOK_LIST = "com.adisoftwares.bookreader.book_list";
+
     private static final int FILES_LOADER = 0;
 
     private ArrayList<BookData> booksList;
 
     private BooksAdapter adapter;
 
+    private BookLoaderTask bookLoaderTask;
+
     @Bind(R.id.books_recycler_view)
     AutofitRecyclerView recyclerView;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(BOOK_LIST, booksList);
     }
 
     @Nullable
@@ -55,7 +70,13 @@ public class BookGridFragment extends Fragment implements LoaderManager.LoaderCa
 
         ButterKnife.bind(this, rootView);
 
-        booksList = new ArrayList<BookData>();
+        if (savedInstanceState != null)
+            booksList = savedInstanceState.getParcelableArrayList(BOOK_LIST);
+        else
+            booksList = new ArrayList<>();
+
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+
         adapter = new BooksAdapter(getActivity(), booksList);
         recyclerView.setAdapter(adapter);
 
@@ -83,10 +104,6 @@ public class BookGridFragment extends Fragment implements LoaderManager.LoaderCa
         );
 
         return rootView;
-    }
-
-    private void initializeRecyclerView() {
-
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -132,7 +149,8 @@ public class BookGridFragment extends Fragment implements LoaderManager.LoaderCa
 //            }
 //        }
 //        adapter.notifyDataSetChanged();
-        new BookLoaderTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, data);
+        bookLoaderTask = new BookLoaderTask();
+        bookLoaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, data);
     }
 
     @Override
@@ -141,8 +159,10 @@ public class BookGridFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(bookLoaderTask!= null)
+            bookLoaderTask.cancel(true);
         ButterKnife.unbind(this);
     }
 
@@ -152,16 +172,27 @@ public class BookGridFragment extends Fragment implements LoaderManager.LoaderCa
         protected Void doInBackground(Cursor... params) {
             BookData bookData;
             Cursor data = params[0];
+            File book;
             while (data.moveToNext()) {
+                if(isCancelled()){
+                    break;
+                }
                 bookData = null;
+                book = new File(data.getString(data.getColumnIndex(Files.FileColumns.DATA)));
                 try {
-                    if (data.getString(data.getColumnIndex(Files.FileColumns.DATA)).endsWith(".pdf"))
-                        bookData = new PDFBookData(data.getString(data.getColumnIndex(Files.FileColumns.DATA)), getActivity());
-                    else if (data.getString(data.getColumnIndex(Files.FileColumns.DATA)).endsWith(".epub"))
-                        bookData = new EpubBookData(data.getString(data.getColumnIndex(Files.FileColumns.DATA)), getActivity());
-                    bookData.setId(data.getLong(data.getColumnIndex(Files.FileColumns._ID)));
-                    booksList.add(bookData);
-                    publishProgress(booksList.size() - 1);
+                    if (book.isDirectory()) {
+                        continue;
+                    } else {
+                        if (book.getAbsolutePath().endsWith(".pdf"))
+                            bookData = new PDFBookData(data.getString(data.getColumnIndex(Files.FileColumns.DATA)));
+                        else if (book.getAbsolutePath().endsWith(".epub"))
+                            bookData = new EpubBookData(data.getString(data.getColumnIndex(Files.FileColumns.DATA)));
+                        else
+                            continue;
+                        bookData.setId(data.getLong(data.getColumnIndex(Files.FileColumns._ID)));
+                        booksList.add(bookData);
+                        publishProgress(booksList.size() - 1);
+                    }
                 } catch (Exception e) {
                     Log.d("Aditya", e.toString());
                 }

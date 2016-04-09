@@ -1,17 +1,18 @@
 package com.adisoftwares.bookreader;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by adityathanekar on 06/02/16.
  */
-public abstract class BookData {
+public abstract class BookData implements Parcelable {
 
     private long id;
 
     private String path;
 
-    private String bookName;
 
     public abstract Bitmap getThumbnail(int width, int height);
 
@@ -35,11 +36,20 @@ public abstract class BookData {
         this.id = id;
     }
 
-    public String getBookName() {
-        return bookName;
+
+    protected BookData(Parcel in) {
+        id = in.readLong();
+        path = in.readString();
     }
 
-    public void setBookName(String bookName) {
-        this.bookName = bookName;
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(path);
     }
 }

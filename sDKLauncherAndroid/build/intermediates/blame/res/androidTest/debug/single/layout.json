@@ -36,12 +36,12 @@
         "source": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/bundles/debug/res/layout/meta_data.xml"
     },
     {
-        "merged": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/res/merged/androidTest/debug/layout/list_of_figures.xml",
-        "source": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/bundles/debug/res/layout/list_of_figures.xml"
-    },
-    {
         "merged": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/res/merged/androidTest/debug/layout/book_item.xml",
         "source": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/bundles/debug/res/layout/book_item.xml"
+    },
+    {
+        "merged": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/res/merged/androidTest/debug/layout/list_of_figures.xml",
+        "source": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/bundles/debug/res/layout/list_of_figures.xml"
     },
     {
         "merged": "/Users/adityathanekar/Documents/AndroidProjects/Bookreader/sDKLauncherAndroid/build/intermediates/res/merged/androidTest/debug/layout/spine_items.xml",

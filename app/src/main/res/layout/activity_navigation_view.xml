@@ -6,33 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <include
-            layout="@layout/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top" />
-
-        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </FrameLayout>
+        android:layout_height="match_parent" />
 
     <android.support.design.widget.NavigationView
         android:id="@+id/navigationView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:headerLayout="@layout/navigation_view_header"
         android:background="@android:color/white"
+        app:headerLayout="@layout/navigation_view_header"
         app:itemBackground="@drawable/drawer_item_text"
-        app:itemTextColor="@android:color/black"
         app:itemIconTint="@android:color/black"
+        app:itemTextColor="@android:color/black"
         app:menu="@menu/navigation_menu" />
 
 </android.support.v4.widget.DrawerLayout>

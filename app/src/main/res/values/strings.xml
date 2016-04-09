@@ -96,5 +96,6 @@
     <string name="extract_visible_bitmap">Extract visible bitmap</string>
     <string name="menu_lock">Lock</string>
     <string name="menu_unlock">Unlock</string>
+    <string name="folder_view">Folder view</string>
 
 </resources>

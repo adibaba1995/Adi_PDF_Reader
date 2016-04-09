@@ -1,4 +1,4 @@
-package com.adisoftwares.bookreader;
+package com.adisoftwares.bookreader.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -11,7 +11,7 @@ import android.util.AttributeSet;
  * Normally the recyclerview does not span columns dynamically. So this is the subclass of recyclerview which spans the columns dynamically.
  */
 public class AutofitRecyclerView extends RecyclerView {
-    private GridLayoutManager manager;
+    private WrapContentGridLayoutManager manager;
     private int columnWidth = -1;
 
     public AutofitRecyclerView(Context context) {
@@ -39,7 +39,7 @@ public class AutofitRecyclerView extends RecyclerView {
             array.recycle();
         }
 
-        manager = new GridLayoutManager(getContext(), 1);
+        manager = new WrapContentGridLayoutManager(getContext(), 1);
         setLayoutManager(manager);
     }
 
@@ -52,4 +52,19 @@ public class AutofitRecyclerView extends RecyclerView {
         }
     }
 
+}
+
+class WrapContentGridLayoutManager extends GridLayoutManager {
+
+    public WrapContentGridLayoutManager(Context context, int spanCount) {
+        super(context, spanCount);
+    }
+
+    @Override
+    public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+        try {
+            super.onLayoutChildren(recycler, state);
+        } catch (IndexOutOfBoundsException e) {
+        }
+    }
 }

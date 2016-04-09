@@ -25,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.Selection;
 import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -336,7 +337,7 @@ public class PdfViewFragment extends Fragment implements FilePicker.FilePickerSu
                 mDocView.setMode(MuPDFReaderView.Mode.Selecting);
                 showInfo(getString(R.string.select_text));
                 CopyActionModeCallback callback = new CopyActionModeCallback();
-                copyActionMode = ((AppCompatActivity)getActivity()).startSupportActionMode(callback);
+                copyActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(callback);
                 copyActionMode.setTitle("Copy");
                 return true;
         }
@@ -1506,10 +1507,42 @@ public class PdfViewFragment extends Fragment implements FilePicker.FilePickerSu
     public class CopyActionModeCallback implements ActionMode.Callback {
 
         private Intent mShareIntent;
+        private String selectedText;
 
         @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.getMenuInflater().inflate(R.menu.copy, menu);
+        public boolean onCreateActionMode(ActionMode mode, final Menu menu) {
+            getActivity().getMenuInflater().inflate(R.menu.copy, menu);
+
+
+//            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menu.findItem(R.id.action_share));
+//            mShareIntent = new Intent();
+//            mShareIntent.setAction(Intent.ACTION_SEND);
+//            mShareIntent.setType("text/plain");
+//            String selection = ((MuPDFView) mDocView.getDisplayedView()).getSelection();
+//            mShareIntent.putExtra(Intent.EXTRA_TEXT, selection);
+
+            // Find the MenuItem that we know has the ShareActionProvider
+            mDocView.setTextSelectedListener(new MuPDFReaderView.OnTextSelectedListener() {
+                @Override
+                public void onTextSelected() {
+                    mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menu.findItem(R.id.action_share));
+                    mShareIntent = new Intent();
+                    mShareIntent.setAction(Intent.ACTION_SEND);
+                    mShareIntent.setType("text/plain");
+                    String selection = ((MuPDFView) mDocView.getDisplayedView()).getSelection();
+                    mShareIntent.putExtra(Intent.EXTRA_TEXT, selection);
+                    mShareActionProvider.setShareIntent(mShareIntent);
+                }
+            });
+            MenuItem item = menu.findItem(R.id.action_share);
+
+            // Get its ShareActionProvider
+            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+            // Connect the dots: give the ShareActionProvider its Share Intent
+            if (mShareActionProvider != null) {
+                mShareActionProvider.setShareIntent(mShareIntent);
+            }
 
             return true;
         }
@@ -1531,17 +1564,17 @@ public class PdfViewFragment extends Fragment implements FilePicker.FilePickerSu
                     showInfo(success ? getString(R.string.copied_to_clipboard) : getString(R.string.no_text_selected));
                     mDocView.setMode(MuPDFReaderView.Mode.Viewing);
                     return true;
-                case R.id.action_share:
-                    mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-                    mShareIntent = new Intent();
-                    mShareIntent.setAction(Intent.ACTION_SEND);
-                    mShareIntent.setType("text/plain");
-                    String selection = ((MuPDFView)mDocView.getDisplayedView()).getSelection();
-                    if(selection != null)
-                        mShareIntent.putExtra(Intent.EXTRA_TEXT, ((MuPDFView)mDocView.getDisplayedView()).getSelection());
-                    else
-                        showInfo(getString(R.string.no_text_selected));
-                    break;
+//                case R.id.action_share:
+//                    mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+//                    mShareIntent = new Intent();
+//                    mShareIntent.setAction(Intent.ACTION_SEND);
+//                    mShareIntent.setType("text/plain");
+//                    String selection = ((MuPDFView)mDocView.getDisplayedView()).getSelection();
+//                    if(selection != null)
+//                        mShareIntent.putExtra(Intent.EXTRA_TEXT, ((MuPDFView)mDocView.getDisplayedView()).getSelection());
+//                    else
+//                        showInfo(getString(R.string.no_text_selected));
+//                    break;
             }
 
             return false;

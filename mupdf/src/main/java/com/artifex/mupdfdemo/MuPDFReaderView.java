@@ -23,6 +23,12 @@ public class MuPDFReaderView extends ReaderView {
 	protected void onDocMotion() {}
 	protected void onHit(Hit item) {};
 
+	private OnTextSelectedListener textSelectedListener;
+
+	public interface OnTextSelectedListener {
+		public void onTextSelected();
+	}
+
 	public void setLinksEnabled(boolean b) {
 		mLinksEnabled = b;
 		resetupChildren();
@@ -125,8 +131,11 @@ public class MuPDFReaderView extends ReaderView {
 
 			return super.onScroll(e1, e2, distanceX, distanceY);
 		case Selecting:
-			if (pageView != null)
+			if (pageView != null) {
 				pageView.selectText(e1.getX(), e1.getY(), e2.getX(), e2.getY());
+				if(textSelectedListener != null)
+					textSelectedListener.onTextSelected();
+			}
 			return true;
 		default:
 			return true;
@@ -272,5 +281,9 @@ public class MuPDFReaderView extends ReaderView {
 	@Override
 	protected void onScaleChild(View v, Float scale) {
 		((MuPDFView) v).setScale(scale);
+	}
+
+	public void setTextSelectedListener(OnTextSelectedListener listener) {
+		this.textSelectedListener = listener;
 	}
 }

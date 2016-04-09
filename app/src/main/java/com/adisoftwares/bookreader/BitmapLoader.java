@@ -10,7 +10,6 @@ import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
 
-
 /**
  * Created by adityathanekar on 28/02/16.
  */
