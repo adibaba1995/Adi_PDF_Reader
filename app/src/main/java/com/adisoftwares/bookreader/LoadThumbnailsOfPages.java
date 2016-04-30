@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.support.v4.util.LruCache;
 
+import com.adisoftwares.bookreader.cache.MemoryBitmapLoader;
 import com.artifex.mupdfdemo.MuPDFCore;
 
 /**

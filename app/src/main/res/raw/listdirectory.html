@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>Directory Listing</title>
+
+	<script type="text/javascript">
+function upload()
+{
+    var file = document.upload_form.filename;
+	if(file.value == ""){
+		alert("Please select a file!");
+		return;
+	}
+	else {
+/*		if (!/\.(pdf|PDF|txt|TXT)$/.test(file.value)) {
+			alert("You can only upload PDF/TXT file!");
+			file.value = "";
+			return;
+		}*/
+		document.upload_form.submit();
+	}
+}
+
+</script>
+</head>
+
+<body>
+
+<h1>Adi Book Reader</h1>
+
+
+<form name="upload_form" action="/" method="post" enctype="multipart/form-data" >
+	<table border="0" align="left" height="80">
+		<tr>
+			<td><b style="font-size:72">Select a file to upload :</b>
+				<input style="width: 380px;height:25px;vertical-align:middle" id="file" type="file" name="filename" size="50"/>
+				<input style="width:70px;height:25px;vertical-align:middle;" type="button" value="Upload" onclick="upload()"/>
+
+			</td>
+		</tr>
+	</table>
+</form>
+
+<table width="1600" style="margin:0px auto 0px auto;">
+	<tr>
+		<td align="left">Local documents</td>
+	</tr>
+</table>
+
+<table width="1600" cellpadding="0" cellspacing="0" sytle="margin:20px auto 0px auto;border-collapse:collapse;" bordercolor="#179cd8">
+	<tbody>
+	<tr>
+		<td style="background:#179cd8;color:#ffffff" width="50%" style="padding-left:10px" align="center" vertical-align="bottom">File/Folder Name</td>
+		<td style="background:#179cd8;color:#ffffff" width="16%" align="center" vertical-align="bottom">Type</td>
+		<td style="background:#179cd8;color:#ffffff" width="17%" align="center" vertical-align="bottom">Last Modified</td>
+		<td style="background:#179cd8;color:#ffffff" width="17%" align="center" vertical-align="bottom">Size</td>
+	</tr>
+		%FOLDERLIST%
+	</tbody>
+</table>
+<hr />
+
+<div>
+	<table width="1008" style="margin:100px auto 0px auto;">
+		<tr>
+			<td height="30" align="center">2016 © Adi Softwares. ALL Rights Reserved.</td>
+		</tr>
+	</table>
+</div>
+
+</body>
+</html>

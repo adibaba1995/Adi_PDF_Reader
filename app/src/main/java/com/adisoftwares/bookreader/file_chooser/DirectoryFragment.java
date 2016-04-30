@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +21,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -36,7 +36,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.adisoftwares.bookreader.R;
-import com.adisoftwares.bookreader.epub.EpubActivity;
 import com.adisoftwares.bookreader.pdf.PdfViewActivity;
 import com.adisoftwares.bookreader.view.ObservableListView;
 import com.adisoftwares.bookreader.view.ObservableScrollViewCallbacks;
@@ -310,10 +309,6 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
 
                                                    /*intent = new Intent(getActivity(), PdfViewActivity.class);
                                                    intent.putExtra(PdfViewActivity.EXTRA_FILE_PATH, booksList.get(position).getPath());*/
-                                    startActivity(intent);
-                                } else if (fileName.endsWith(".epub")) {
-                                    intent = new Intent(getActivity(), EpubActivity.class);
-                                    intent.putExtra(EpubActivity.EXTRA_FILE_PATH, fileName);
                                     startActivity(intent);
                                 }
                                 flag = true;

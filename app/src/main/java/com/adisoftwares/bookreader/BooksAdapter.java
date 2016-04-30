@@ -40,7 +40,6 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BooksViewHol
 
     private OnItemClickListener mItemClickListener;
 
-
     Context context;
 
     public BooksAdapter(Context context, ArrayList<BookData> booksList) {

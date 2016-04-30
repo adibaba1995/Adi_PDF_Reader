@@ -4,9 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Bookreader.iml" filepath="$PROJECT_DIR$/Bookreader.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ePub3Library/ePub3Library.iml" filepath="$PROJECT_DIR$/ePub3Library/ePub3Library.iml" />
       <module fileurl="file://$PROJECT_DIR$/mupdf/mupdf.iml" filepath="$PROJECT_DIR$/mupdf/mupdf.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sDKLauncherAndroid/sDKLauncherAndroid.iml" filepath="$PROJECT_DIR$/sDKLauncherAndroid/sDKLauncherAndroid.iml" />
     </modules>
   </component>
 </project>

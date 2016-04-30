@@ -97,5 +97,17 @@
     <string name="menu_lock">Lock</string>
     <string name="menu_unlock">Unlock</string>
     <string name="folder_view">Folder view</string>
+    <string name="grant_permission">Grant permission</string>
+    <string name="book_permission">You have turned off the permissions for accessing pdf documents.</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="search_title">Search books</string>
+    <string name="search_hint">Enter book name</string>
+    <string name="empty_string">You don\'t have pdf file.</string>
+    <string name="enable_share">Enable file sharing</string>
+    <string name="sharing_instruction">Type above IP address on your browser in your PC or mobile.</string>
+    <string name="disable_share">Disable file sharing</string>
+    <string name="drive">Google drive</string>
 
 </resources>

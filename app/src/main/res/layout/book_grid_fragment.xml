@@ -20,18 +20,25 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <com.adisoftwares.bookreader.view.AutofitRecyclerView
-        android:id="@+id/books_recycler_view"
+    <FrameLayout
+        android:id="@+id/recycler_view_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnWidth="@dimen/column_width"
-        android:layout_marginLeft="@dimen/grid_margin"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <com.adisoftwares.bookreader.view.AutofitRecyclerView
+            android:id="@+id/books_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/grid_margin"
+            android:columnWidth="@dimen/column_width" />
+
+    </FrameLayout>
 
     <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@+id/routines_recycler_view"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"/>-->
+    <!--android:id="@+id/routines_recycler_view"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"/>-->
 
 </android.support.design.widget.CoordinatorLayout>

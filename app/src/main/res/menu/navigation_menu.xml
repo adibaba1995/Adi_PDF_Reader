@@ -11,5 +11,13 @@
             android:id="@+id/folder"
             android:title="@string/folder"
             android:icon="@drawable/directory"/>
+        <item
+            android:id="@+id/wifi"
+            android:title="Wi-Fi"
+            android:icon="@drawable/wifi" />
+        <item
+            android:id="@+id/drive"
+            android:title="@string/drive"
+            android:icon="@drawable/drive" />
     </group>
 </menu>

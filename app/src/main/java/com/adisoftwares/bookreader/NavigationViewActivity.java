@@ -1,17 +1,21 @@
 package com.adisoftwares.bookreader;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.adisoftwares.bookreader.file_chooser.DirectoryFragment;
+import com.squareup.otto.Subscribe;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,7 +40,7 @@ public class NavigationViewActivity extends AppCompatActivity implements Navigat
         ButterKnife.bind(this);
         initNavigationView();
 
-        FragmentManager fm = getSupportFragmentManager();
+        FragmentManager fm = getFragmentManager();
 
         if (savedInstanceState == null) {
             Fragment fragment = new BookGridFragment();
@@ -45,16 +49,19 @@ public class NavigationViewActivity extends AppCompatActivity implements Navigat
     }
 
     private void initNavigationView() {
-//        Menu navigationMenu = navigationView.getMenu();
-//        navigationMenu.findItem(R.id.folder).setIcon(MrVector.inflate(getResources(), R.drawable.directory));
-//        navigationMenu.findItem(R.id.books).setIcon(MrVector.inflate(getResources(), R.drawable.book));
-
         navigationView.setNavigationItemSelectedListener(this);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BusStation.getBus().register(this);
+    }
 
-        //View headerView = getLayoutInflater().inflate(R.layout.navigation_view_header, null);
-        //Picasso.with(this).load(R.drawable.material_wallpaper).into((ImageView)headerView.findViewById(R.id.navigation_header_image));
-        //navigationView.addHeaderView(headerView);
+    @Override
+    protected void onPause() {
+        super.onPause();
+        BusStation.getBus().unregister(this);
     }
 
     @Override
@@ -62,21 +69,46 @@ public class NavigationViewActivity extends AppCompatActivity implements Navigat
         super.onPostCreate(savedInstanceState, persistentState);
     }
 
+    @Subscribe
+    public void searchViewTextSubmitted(String title) {
+        FragmentManager fm = getFragmentManager();
+        Fragment fragment = SearchResultFragment.newInstance(title);
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int itemId = item.getItemId();
-        Fragment fragment;
+        Fragment fragment = null;
         switch (itemId) {
             case R.id.folder:
                 fragment = new DirectoryFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
                 break;
             case R.id.books:
                 fragment = new BookGridFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
                 break;
+            case R.id.wifi:
+                fragment = new WifiFragment();
+                break;
+            case R.id.drive:
+                fragment = new DriveFragment();
+                break;
+        }
+        if (fragment != null) {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.remove(getFragmentManager().findFragmentById(R.id.fragment_container)).add(R.id.fragment_container, fragment).commit();
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void enableNavigationDrawer(boolean isEnabled, Toolbar toolbar) {
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.setDrawerListener(toggle);
+        toggle.syncState();
     }
 }

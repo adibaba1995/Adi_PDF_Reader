@@ -3,9 +3,11 @@ package com.adisoftwares.bookreader;
 import android.graphics.Bitmap;
 import android.os.Environment;
 
-import java.io.File;
+import com.adisoftwares.bookreader.cache.BitmapLoader;
+import com.adisoftwares.bookreader.cache.BitmapLruCache;
+import com.adisoftwares.bookreader.cache.CacheableBitmapDrawable;
 
-import nl.siegmann.epublib.domain.Book;
+import java.io.File;
 //import android.support.v4.util.LruCache;
 
 /**
