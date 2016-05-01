@@ -149,7 +149,18 @@ public class BookContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+        SQLiteDatabase database = mOpenHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
+        int rowUpdated = 0;
+        switch (match) {
+            case RECENTS:
+                rowUpdated = database.update(BookContract.RecentsEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+        }
+        if (rowUpdated >= 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowUpdated;
     }
 
     static UriMatcher buildUriMatcher() {

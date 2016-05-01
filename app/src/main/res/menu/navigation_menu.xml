@@ -1,23 +1,32 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- group with single selected item so only one item is highlighted in the nav menu -->
-    <group
-        android:id="@+id/main"
-        android:checkableBehavior="single">
-        <item
-            android:id="@+id/books"
-            android:title="@string/books"
-            android:icon="@drawable/book" />
-        <item
-            android:id="@+id/folder"
-            android:title="@string/folder"
-            android:icon="@drawable/directory"/>
-        <item
-            android:id="@+id/wifi"
-            android:title="Wi-Fi"
-            android:icon="@drawable/wifi" />
-        <item
-            android:id="@+id/drive"
-            android:title="@string/drive"
-            android:icon="@drawable/drive" />
-    </group>
+        <group android:id="@+id/books" android:checkableBehavior="single">
+            <item
+                android:id="@+id/documents"
+                android:icon="@drawable/document"
+                android:title="@string/documents" />
+            <item
+                android:id="@+id/recents"
+                android:icon="@drawable/recent"
+                android:title="@string/recents" />
+
+            <item
+                android:id="@+id/last_added"
+                android:icon="@drawable/last_added"
+                android:title="@string/last_added" />
+        </group>
+        <group android:id="@+id/other" android:checkableBehavior="single">
+            <item
+                android:id="@+id/folder"
+                android:icon="@drawable/directory"
+                android:title="@string/folder" />
+            <item
+                android:id="@+id/wifi"
+                android:icon="@drawable/wifi"
+                android:title="@string/wifi" />
+            <item
+                android:id="@+id/drive"
+                android:icon="@drawable/drive"
+                android:title="@string/drive" />
+        </group>
 </menu>

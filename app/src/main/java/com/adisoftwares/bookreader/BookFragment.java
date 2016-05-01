@@ -52,7 +52,7 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
 
     protected ArrayList<BookData> booksList;
 
-    private BooksAdapter adapter;
+    protected BooksAdapter adapter;
 
     protected BookLoaderTask bookLoaderTask;
 
@@ -62,7 +62,7 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
         public void dataLoaded();
     }
 
-    private View emptyView;
+    protected View emptyView;
     private View errorView;
 
     protected Cursor cursor = null;

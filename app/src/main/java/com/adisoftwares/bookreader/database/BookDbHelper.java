@@ -35,6 +35,7 @@ public class BookDbHelper extends SQLiteOpenHelper {
                 + BookContract.RecentsEntry.COLUMN_ADD_TIME + " TEXT)";
 
         db.execSQL(SQL_CREATE_BOOKMARKS_TABLE);
+        db.execSQL(SQL_CREATE_RECENTS_TABLE);
     }
 
     @Override

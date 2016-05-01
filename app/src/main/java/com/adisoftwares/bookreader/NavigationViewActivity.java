@@ -87,8 +87,14 @@ public class NavigationViewActivity extends AppCompatActivity implements Navigat
             case R.id.folder:
                 fragment = new DirectoryFragment();
                 break;
-            case R.id.books:
+            case R.id.documents:
                 fragment = new BookGridFragment();
+                break;
+            case R.id.recents:
+                fragment = new RecentsFragment();
+                break;
+            case R.id.last_added:
+                fragment = new LastAddedFragment();
                 break;
             case R.id.wifi:
                 fragment = new WifiFragment();

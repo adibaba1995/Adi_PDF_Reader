@@ -53,7 +53,7 @@
     <string name="reflow">Flowing text</string>
 
     <!--Navigation menu items-->
-    <string name="books">Books</string>
+    <string name="documents">Documents</string>
     <string name="folder">Folder view</string>
     <string name="openDrawer">Open drawer</string>
     <string name="closeDrawer">Close drawer</string>
@@ -113,5 +113,8 @@
     <string name="bookmark">Bookmark</string>
     <string name="bookmark_add">Bookmark added</string>
     <string name="bookmark_remove">Bookmark removed</string>
+    <string name="recents">Recently read</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="last_added">Last added</string>
 
 </resources>

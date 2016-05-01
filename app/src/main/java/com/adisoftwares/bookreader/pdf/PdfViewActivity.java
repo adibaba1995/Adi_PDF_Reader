@@ -554,11 +554,25 @@ public class PdfViewActivity extends AppCompatActivity implements FilePicker.Fil
 
     private void addRecent() {
         ContentResolver resolver = getContentResolver();
-        ContentValues values = new ContentValues();
-        values.put(BookContract.RecentsEntry.COLUMN_PATH, path);
-        values.put(BookContract.RecentsEntry.COLUMN_FILE_NAME, Utility.getFileNameFromUrl(path));
-        values.put(BookContract.RecentsEntry.COLUMN_ADD_TIME, Utility.getCurrentTime());
-        getContentResolver().insert(BookContract.RecentsEntry.CONTENT_URI, values);
+        String projection[] = {BookContract.RecentsEntry.COLUMN_PATH};
+        String selection = BookContract.RecentsEntry.COLUMN_PATH + " = ?";
+        String[] selectionArgs = new String[]{path};
+        //cursor = getActivity().getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
+        Cursor cursor = resolver.query(BookContract.RecentsEntry.CONTENT_URI, projection, selection, selectionArgs, null);
+
+        if(!cursor.moveToFirst()) {
+            ContentValues values = new ContentValues();
+            values.put(BookContract.RecentsEntry.COLUMN_PATH, path);
+            values.put(BookContract.RecentsEntry.COLUMN_FILE_NAME, Utility.getFileNameFromUrl(path));
+            values.put(BookContract.RecentsEntry.COLUMN_ADD_TIME, Utility.getCurrentTime());
+            resolver.insert(BookContract.RecentsEntry.CONTENT_URI, values);
+        } else {
+            ContentValues values = new ContentValues();
+            values.put(BookContract.RecentsEntry.COLUMN_ADD_TIME, Utility.getCurrentTime());
+            String where = BookContract.RecentsEntry.COLUMN_PATH + " = ?";
+            String selectionArguments[] = {path};
+            resolver.update(BookContract.RecentsEntry.CONTENT_URI, values, where, selectionArguments);
+        }
     }
 
     private void removeBookmark() {
