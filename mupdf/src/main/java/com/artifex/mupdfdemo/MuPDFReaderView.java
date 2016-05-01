@@ -133,7 +133,7 @@ public class MuPDFReaderView extends ReaderView {
 		case Selecting:
 			if (pageView != null) {
 				pageView.selectText(e1.getX(), e1.getY(), e2.getX(), e2.getY());
-				if(textSelectedListener != null)
+				if (textSelectedListener != null)
 					textSelectedListener.onTextSelected();
 			}
 			return true;

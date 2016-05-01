@@ -3,6 +3,7 @@ package com.adisoftwares.bookreader;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -194,5 +195,18 @@ public class Utility {
             }
         } catch (Exception ex) { } // for now eat exceptions
         return "";
+    }
+
+    public static long getCurrentTime(){
+        return System.currentTimeMillis();
+    }
+
+    public static int getToolbarHeight(Context context) {
+        final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.actionBarSize});
+        int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
+
+        return toolbarHeight;
     }
 }

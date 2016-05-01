@@ -6,8 +6,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
@@ -19,16 +21,34 @@ import android.view.ViewGroup;
 
 import com.squareup.otto.Bus;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by adityathanekar on 03/02/16.
  */
-public class BookGridFragment extends BookFragment {
+public class BookGridFragment extends BookFragment implements BookFragment.DataLoadedListener {
+
+    @Bind(R.id.read_last)
+    FloatingActionButton fab;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setHasOptionsMenu(true);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView =  super.onCreateView(inflater, container, savedInstanceState);
+
+        ButterKnife.bind(this, rootView);
+
+        setDataLoadedListener(this);
+
+        return rootView;
     }
 
     @Override
@@ -90,6 +110,19 @@ public class BookGridFragment extends BookFragment {
 
                 adapter.changeCursor(cursor);
                 return true;
+            }
+        });
+    }
+
+    @Override
+    public void dataLoaded() {
+        if(booksList.size() == 0 || !getActivity().getSharedPreferences(Preference.PREFERENCE_NAME, Context.MODE_PRIVATE).contains(Preference.LAST_READ_BOOK_PATH))
+            fab.setVisibility(View.INVISIBLE);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openBook(getActivity().getSharedPreferences(Preference.PREFERENCE_NAME, Context.MODE_PRIVATE).getString(Preference.LAST_READ_BOOK_PATH, ""));
             }
         });
     }

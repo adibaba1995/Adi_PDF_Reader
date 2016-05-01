@@ -3,6 +3,8 @@ package com.artifex.mupdfdemo;
 import android.graphics.PointF;
 import android.graphics.RectF;
 
+;
+
 public interface MuPDFView {
 	public void setPage(int page, PointF size);
 	public void setScale(float scale);

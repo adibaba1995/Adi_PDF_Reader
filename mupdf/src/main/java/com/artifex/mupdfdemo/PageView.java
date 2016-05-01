@@ -88,8 +88,7 @@ class TextSelector {
 
 public abstract class PageView extends ViewGroup {
 	private static final int HIGHLIGHT_COLOR = 0x802572AC;
-	//private static final int LINK_COLOR = 0x80AC7225;
-	private static final int LINK_COLOR = 0x00000000;
+	private static final int LINK_COLOR = 0x80AC7225;
 	private static final int BOX_COLOR = 0xFF4444FF;
 	private static final int INK_COLOR = 0xFFFF0000;
 	private static final float INK_THICKNESS = 10.0f;

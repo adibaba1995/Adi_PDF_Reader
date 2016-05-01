@@ -50,11 +50,17 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
     private static final int REQUEST_READ_EXTERNAL_STORAGE = 0;
     private static final int FILES_LOADER = 0;
 
-    private ArrayList<BookData> booksList;
+    protected ArrayList<BookData> booksList;
 
     private BooksAdapter adapter;
 
     protected BookLoaderTask bookLoaderTask;
+
+    protected DataLoadedListener dataLoadedListener;
+
+    protected interface DataLoadedListener {
+        public void dataLoaded();
+    }
 
     private View emptyView;
     private View errorView;
@@ -246,6 +252,12 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
             if(booksList.size() == 0) {
                 recyclerViewContainer.addView(emptyView);
             }
+            if(dataLoadedListener != null)
+                dataLoadedListener.dataLoaded();
         }
+    }
+
+    protected void setDataLoadedListener(DataLoadedListener listener) {
+        dataLoadedListener = listener;
     }
 }

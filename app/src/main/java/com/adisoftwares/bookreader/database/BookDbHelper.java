@@ -20,14 +20,19 @@ public class BookDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        final String SQL_CREATE_BOOKMARKS_TABLE = "CREATE TABLE " + BookContract.BookmarkEntry.TABLE_NAME + " (" +
-                BookContract.BookmarkEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                BookContract.BookmarkEntry.COLUMN_PATH + " TEXT NOT NULL, " +
-                BookContract.BookmarkEntry.COLUMN_FILE_NAME + " TEXT NOT NULL, " +
-                BookContract.BookmarkEntry.COLUMN_BOOKMARK_NAME + " TEXT NOT NULL, " +
-                BookContract.BookmarkEntry.COLUMN_TIME + " INTEGER NOT NULL, " +
-                BookContract.BookmarkEntry.COLUMN_PAGE_NO + " INTEGER" +
-                ");";
+        final String SQL_CREATE_BOOKMARKS_TABLE = "CREATE TABLE IF NOT EXISTS " + BookContract.BookmarkEntry.TABLE_NAME + " ("
+                + BookContract.BookmarkEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + BookContract.BookmarkEntry.COLUMN_PATH + " TEXT, "
+                + BookContract.BookmarkEntry.COLUMN_FILE_NAME+ " TEXT, "
+                + BookContract.BookmarkEntry.COLUMN_PAGE_NO + " INTEGER, "
+                + BookContract.BookmarkEntry.COLUMN_BOOKMARK_NAME + " TEXT, "
+                + BookContract.BookmarkEntry.COLUMN_TIME + " TEXT)";
+
+        final String SQL_CREATE_RECENTS_TABLE = "CREATE TABLE IF NOT EXISTS " + BookContract.RecentsEntry.TABLE_NAME + " ("
+                + BookContract.RecentsEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + BookContract.RecentsEntry.COLUMN_PATH + " TEXT, "
+                + BookContract.RecentsEntry.COLUMN_FILE_NAME+ " TEXT, "
+                + BookContract.RecentsEntry.COLUMN_ADD_TIME + " TEXT)";
 
         db.execSQL(SQL_CREATE_BOOKMARKS_TABLE);
     }

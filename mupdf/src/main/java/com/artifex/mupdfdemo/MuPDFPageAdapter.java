@@ -8,7 +8,6 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Toast;
 
 public class MuPDFPageAdapter extends BaseAdapter {
 	private final Context mContext;

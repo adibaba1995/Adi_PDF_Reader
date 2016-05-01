@@ -15,6 +15,7 @@ public class BookContract {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static final String PATH_PDF_BOOKMARK = "pdf_bookmark";
+    public static final String PATH_PDF_RECENTS = "pdf_recents";
 
     public static long getIdFromUri(Uri uri) {
         return Long.valueOf(uri.getPathSegments().get(1));
@@ -40,9 +41,25 @@ public class BookContract {
         public static Uri buildBookUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+    }
 
-        public static Uri buildBookUriWithName(String name) {
-            return CONTENT_URI.buildUpon().appendPath(name).build();
+    public static final class RecentsEntry implements BaseColumns {
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_PDF_RECENTS).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PDF_RECENTS;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PDF_RECENTS;
+
+        public static final String TABLE_NAME = "recents";
+
+        public static final String COLUMN_PATH = "path";
+        public static final String COLUMN_FILE_NAME = "filename";
+        public static final String COLUMN_ADD_TIME = "addtime";
+
+        public static Uri buildBookUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
         }
     }
 }

@@ -42,6 +42,15 @@
         <activity android:name=".pdf.OutlineActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
+        <provider
+            android:authorities="com.adisoftwares.bookreader"
+            android:name=".database.BookContentProvider"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:label="BookContentProvider"
+            android:readPermission="com.adisoftwares.bookreader.READ"
+            android:writePermission="com.adisoftwares.bookreader.WRITE"/>
+
     </application>
 
 </manifest>

@@ -109,5 +109,9 @@
     <string name="sharing_instruction">Type above IP address on your browser in your PC or mobile.</string>
     <string name="disable_share">Disable file sharing</string>
     <string name="drive">Google drive</string>
+    <string name="reflow_text">Reflow text</string>
+    <string name="bookmark">Bookmark</string>
+    <string name="bookmark_add">Bookmark added</string>
+    <string name="bookmark_remove">Bookmark removed</string>
 
 </resources>

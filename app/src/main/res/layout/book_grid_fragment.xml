@@ -35,10 +35,14 @@
 
     </FrameLayout>
 
-    <!--<android.support.v7.widget.RecyclerView-->
-    <!--android:id="@+id/routines_recycler_view"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"/>-->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/read_last"
+        android:layout_gravity="bottom|right|end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fabSize="normal"
+        android:src="@drawable/read_book"
+        android:layout_margin="16dp"
+        app:layout_behavior="com.adisoftwares.bookreader.ScrollingFABBehavior"/>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -9,8 +9,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 
 import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -21,7 +19,6 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.Scroller;
 
 public class ReaderView
@@ -68,7 +65,6 @@ public class ReaderView
 	private int               mScrollerLastY;
 	private float		  mLastScaleFocusX;
 	private float		  mLastScaleFocusY;
-	//private Activity mActivity;
 
 	public static abstract class ViewMapper {
 		public abstract void applyToView(View view);
@@ -856,41 +852,6 @@ public class ReaderView
 		}
 	}
 
-	/*private void measureView(View v) {
-		// See what size the view wants to be
-		v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-
-		if (!mReflow) {
-			// Work out a scale that will fit it to this view
-			float scale = Math.min((float) getWidth() / (float) v.getMeasuredWidth(),
-					(float) getHeight() / (float) v.getMeasuredHeight());
-			// Use the fitting values scaled by our current scale factor
-			if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-				v.measure(MeasureSpec.AT_MOST | (int) (v.getMeasuredWidth() * (scale + getScalingFactor(v)) * mScale),
-						MeasureSpec.AT_MOST | (int) (v.getMeasuredHeight() * (scale + getScalingFactor(v)) * mScale));
-			} else {
-				v.measure(View.MeasureSpec.EXACTLY | (int)(v.getMeasuredWidth()*scale*mScale),
-						View.MeasureSpec.EXACTLY | (int)(v.getMeasuredHeight()*scale*mScale));
-			}
-			requestLayout();
-			post(this);
-		} else {
-			v.measure(View.MeasureSpec.EXACTLY | (int) (v.getMeasuredWidth()),
-					View.MeasureSpec.EXACTLY | (int) (v.getMeasuredHeight()));
-		}
-	}*/
-
-	/*private float getScalingFactor(View view) {
-		// Get display width from device
-		int displayWidth = mActivity.getWindowManager().getDefaultDisplay().getWidth();
-
-		// Calculate the max width of the imageView
-		int imageViewWidth = displayWidth;
-
-		// Calculate scaling factor and return it
-		return ( (float) imageViewWidth / (float) view.getWidth() );
-	}*/
-
 	private Rect getScrollBounds(int left, int top, int right, int bottom) {
 		int xmin = getWidth() - right;
 		int xmax = -left;
@@ -972,9 +933,4 @@ public class ReaderView
 		default: throw new NoSuchElementException();
 		}
 	}
-
-	/*
-	public void setActivity(Activity activity) {
-		this.mActivity = activity;
-	}*/
 }

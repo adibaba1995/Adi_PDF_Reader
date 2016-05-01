@@ -6,8 +6,10 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -28,16 +30,7 @@ public class MuPDFReflowView extends WebView implements MuPDFView {
 		mScale = 1.0f;
 		mContentHeight = parentSize.y;
 		getSettings().setJavaScriptEnabled(true);
-		addJavascriptInterface(new Object(){
-			public void reportContentHeight(String value) {
-				mContentHeight = (int)Float.parseFloat(value);
-				mHandler.post(new Runnable() {
-					public void run() {
-						requestLayout();
-					}
-				});
-			}
-		}, "HTMLOUT");
+		addJavascriptInterface(new EpubInterface(), "HTMLOUT");
 		setWebViewClient(new WebViewClient() {
 			@Override
 			public void onPageFinished(WebView view, String url) {
@@ -77,7 +70,7 @@ public class MuPDFReflowView extends WebView implements MuPDFView {
 
 	public void setScale(float scale) {
 		mScale = scale;
-		loadUrl("javascript:document.getElementById('content').style.zoom=\""+(int)(mScale*100)+"%\"");
+		loadUrl("javascript:(document.getElementById('content').style.zoom='"+(int)(mScale*100)+"%')()");
 		requestHeight();
 	}
 
@@ -183,5 +176,17 @@ public class MuPDFReflowView extends WebView implements MuPDFView {
 	public boolean onTouchEvent(MotionEvent ev) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	private class EpubInterface {
+		@JavascriptInterface
+		public void reportContentHeight(String value) {
+			mContentHeight = (int)Float.parseFloat(value);
+			mHandler.post(new Runnable() {
+				public void run() {
+					requestLayout();
+				}
+			});
+		}
 	}
 }
