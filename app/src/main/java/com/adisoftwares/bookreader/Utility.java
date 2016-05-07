@@ -8,15 +8,25 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Collections;
@@ -208,5 +218,52 @@ public class Utility {
         styledAttributes.recycle();
 
         return toolbarHeight;
+    }
+
+    public static int getScreenWidth(Context mContext){
+        int width=0;
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        if(Build.VERSION.SDK_INT>12){
+            Point size = new Point();
+            display.getSize(size);
+            width = size.x;
+        }
+        else{
+            width = display.getWidth();  // Deprecated
+        }
+        return width;
+    }
+
+    public static int getScreenHeight(Context mContext){
+        int height=0;
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        if(Build.VERSION.SDK_INT>12){
+            Point size = new Point();
+            display.getSize(size);
+            height = size.y;
+        }
+        else{
+            height = display.getHeight();  // Deprecated
+        }
+        return height;
+    }
+
+    public static void copyFileUsingStream(File source, File dest) throws IOException {
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(source);
+            os = new FileOutputStream(dest);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        } finally {
+            is.close();
+            os.close();
+        }
     }
 }

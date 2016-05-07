@@ -11,9 +11,10 @@ import android.widget.TextView;
 import com.adisoftwares.bookreader.OnItemClickListener;
 import com.adisoftwares.bookreader.R;
 import com.adisoftwares.bookreader.Utility;
+import com.artifex.mupdfdemo.OutlineActivityData;
 import com.artifex.mupdfdemo.OutlineItem;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -58,9 +59,9 @@ public class OutlineAdapter extends RecyclerView.Adapter<OutlineAdapter.OutlineV
     }
 
     class OutlineViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        @Bind(R.id.title)
+        @BindView(R.id.title)
         TextView title;
-        @Bind(R.id.page)
+        @BindView(R.id.page)
         TextView page;
 
         public OutlineViewHolder(View itemView) {
@@ -71,8 +72,10 @@ public class OutlineAdapter extends RecyclerView.Adapter<OutlineAdapter.OutlineV
 
         @Override
         public void onClick(View v) {
-            if(itemClickListener != null)
-                itemClickListener.onItemClick(v, getAdapterPosition());
+            if(itemClickListener != null) {
+//                OutlineActivityData.get().position = getAdapterPosition();
+                itemClickListener.onItemClick(v, mItems[getAdapterPosition()].page);
+            }
         }
     }
 
@@ -82,6 +85,5 @@ public class OutlineAdapter extends RecyclerView.Adapter<OutlineAdapter.OutlineV
 
     public void setItems(OutlineItem[] items) {
         mItems = items;
-
     }
 }

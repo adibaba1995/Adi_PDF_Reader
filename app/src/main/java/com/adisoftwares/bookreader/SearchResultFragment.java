@@ -12,12 +12,18 @@ import android.view.ViewGroup;
  */
 public class SearchResultFragment extends BookFragment {
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(false);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
 
-        String title = getArguments().getString(TITLE);
+        String title = getArguments().getString(getString(R.string.book_title));
         if (title != null)
             ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(title);
 
@@ -27,7 +33,7 @@ public class SearchResultFragment extends BookFragment {
     public static SearchResultFragment newInstance(String title) {
         SearchResultFragment fragment = new SearchResultFragment();
         Bundle args = new Bundle();
-        args.putString(TITLE, title);
+        args.putString(BookReaderApplication.getContext().getString(R.string.book_title), title);
         fragment.setArguments(args);
         return fragment;
     }

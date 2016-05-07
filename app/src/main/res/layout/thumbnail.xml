@@ -1,25 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<LinearLayout-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="vertical"-->
+    <!--android:layout_gravity="center">-->
+
+    <!--<ImageView-->
+        <!--android:id="@+id/thumbnail"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:scaleType="fitXY"-->
+        <!--android:layout_height="200dp"-->
+        <!--android:layout_gravity="center"/>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/page_no"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:maxLines="1"-->
+        <!--android:textColor="@android:color/white" />-->
+
+<!--</LinearLayout>-->
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_item"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_gravity="center">
+    android:layout_gravity="center"
+    android:layout_marginRight="@dimen/grid_margin"
+    android:layout_marginTop="@dimen/grid_margin"
+    android:clickable="true"
+    android:gravity="center">
 
     <ImageView
         android:id="@+id/thumbnail"
-        android:layout_width="wrap_content"
-        android:scaleType="fitXY"
+        android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_gravity="center"/>
+        android:scaleType="centerCrop" />
 
-    <TextView
-        android:id="@+id/page_no"
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:maxLines="1"
-        android:textColor="@android:color/white" />
+        android:layout_alignLeft="@+id/thumbnail"
+        android:layout_alignRight="@+id/thumbnail"
+        android:layout_below="@+id/thumbnail"
+        android:background="#00000000"
+        android:gravity="center"
+        android:padding="8dp"
+        android:stretchColumns="*">
 
-</LinearLayout>
+        <TableRow>
+
+            <TextView
+                android:id="@+id/page_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@android:color/white"
+                android:maxLines="1"/>
+
+        </TableRow>
+    </TableLayout>
+
+</RelativeLayout>

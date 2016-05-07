@@ -14,22 +14,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.adisoftwares.bookreader.drive.DriveFragment;
 import com.adisoftwares.bookreader.file_chooser.DirectoryFragment;
+import com.adisoftwares.bookreader.wifi_sharing.WifiFragment;
 import com.squareup.otto.Subscribe;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by adityathanekar on 03/02/16.
  */
+//This is the class for the activity which starts as soon as the app starts.
+//It contains the navigation drawer and the fragments are added or removed as needed.
 public class NavigationViewActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    @Bind(R.id.navigationView)
+    @BindView(R.id.navigationView)
     NavigationView navigationView;
 
-    @Bind(R.id.DrawerLayout)
+    @BindView(R.id.DrawerLayout)
     DrawerLayout drawerLayout;
+
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,7 +44,7 @@ public class NavigationViewActivity extends AppCompatActivity implements Navigat
 
         setContentView(R.layout.activity_navigation_view);
 
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
         initNavigationView();
 
         FragmentManager fm = getFragmentManager();
@@ -65,16 +72,24 @@ public class NavigationViewActivity extends AppCompatActivity implements Navigat
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
+    }
+
+    @Override
     public void onPostCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onPostCreate(savedInstanceState, persistentState);
     }
 
+    //This method is called when the user submits the search button text.
     @Subscribe
     public void searchViewTextSubmitted(String title) {
         FragmentManager fm = getFragmentManager();
         Fragment fragment = SearchResultFragment.newInstance(title);
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.remove(getFragmentManager().findFragmentById(R.id.fragment_container)).add(R.id.fragment_container, fragment);
+//        fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
@@ -111,6 +126,7 @@ public class NavigationViewActivity extends AppCompatActivity implements Navigat
         return true;
     }
 
+    //This method is used to enable the hamburger icon in the fragment's toolbar.
     public void enableNavigationDrawer(boolean isEnabled, Toolbar toolbar) {
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);

@@ -5,14 +5,16 @@
     android:gravity="center">
     
     <TextView
+        android:id="@+id/error_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/book_permission"
         android:layout_margin="16dp"
-        android:textAppearance="?android:textAppearanceLarge"/>
+        android:textAppearance="?android:textAppearanceLarge"
+        android:textColor="@android:color/black"/>
     
     <Button
-        android:id="@+id/grant_permission"
+        android:id="@+id/error_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/grant_permission"/>

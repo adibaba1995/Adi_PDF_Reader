@@ -48,28 +48,29 @@ public class RecentsFragment extends BookFragment {
             BookData bookData;
             Cursor data = params[0];
             File book;
-            while (data.moveToNext()) {
-                if (isCancelled()) {
-                    break;
-                }
-                bookData = null;
-                book = new File(data.getString(data.getColumnIndex(BookContract.RecentsEntry.COLUMN_PATH)));
-                try {
-                    if (book.isDirectory()) {
-                        continue;
-                    } else {
-                        if (book.getAbsolutePath().endsWith(".pdf"))
-                            bookData = new PDFBookData(data.getString(data.getColumnIndex(BookContract.RecentsEntry.COLUMN_PATH)));
-                        else
-                            continue;
-                        bookData.setId(data.getLong(data.getColumnIndex(BookContract.RecentsEntry._ID)));
-                        booksList.add(bookData);
-                        publishProgress(booksList.size() - 1);
+            if (!data.isClosed() && data.isBeforeFirst())
+                while (data.moveToNext()) {
+                    if (isCancelled()) {
+                        break;
                     }
-                } catch (Exception e) {
-                    Log.d("Aditya", e.toString());
+                    bookData = null;
+                    book = new File(data.getString(data.getColumnIndex(BookContract.RecentsEntry.COLUMN_PATH)));
+                    try {
+                        if (book.isDirectory()) {
+                            continue;
+                        } else {
+                            if (book.getAbsolutePath().endsWith(".pdf"))
+                                bookData = new PDFBookData(data.getString(data.getColumnIndex(BookContract.RecentsEntry.COLUMN_PATH)));
+                            else
+                                continue;
+                            bookData.setId(data.getLong(data.getColumnIndex(BookContract.RecentsEntry._ID)));
+                            booksList.add(bookData);
+                            publishProgress(booksList.size() - 1);
+                        }
+                    } catch (Exception e) {
+                        Log.d("Aditya", e.toString());
+                    }
                 }
-            }
             return null;
         }
 
@@ -82,11 +83,9 @@ public class RecentsFragment extends BookFragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if(booksList.size() == 0) {
+            if (booksList.size() == 0) {
                 recyclerViewContainer.addView(emptyView);
             }
-            if(dataLoadedListener != null)
-                dataLoadedListener.dataLoaded();
         }
     }
 }

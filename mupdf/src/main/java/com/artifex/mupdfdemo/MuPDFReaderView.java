@@ -26,7 +26,7 @@ public class MuPDFReaderView extends ReaderView {
 	private OnTextSelectedListener textSelectedListener;
 
 	public interface OnTextSelectedListener {
-		public void onTextSelected();
+		public void onTextSelected(float x1, float y1, float x2, float y2);
 	}
 
 	public void setLinksEnabled(boolean b) {
@@ -134,7 +134,7 @@ public class MuPDFReaderView extends ReaderView {
 			if (pageView != null) {
 				pageView.selectText(e1.getX(), e1.getY(), e2.getX(), e2.getY());
 				if (textSelectedListener != null)
-					textSelectedListener.onTextSelected();
+					textSelectedListener.onTextSelected(e1.getX(), e1.getY(), e2.getX(), e2.getY());
 			}
 			return true;
 		default:

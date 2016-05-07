@@ -3,6 +3,7 @@ package com.adisoftwares.bookreader.file_chooser;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -35,6 +36,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.adisoftwares.bookreader.NavigationViewActivity;
 import com.adisoftwares.bookreader.R;
 import com.adisoftwares.bookreader.pdf.PdfViewActivity;
 import com.adisoftwares.bookreader.view.ObservableListView;
@@ -56,16 +58,25 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
     private Toolbar toolbar;
 
     private static String title_ = "";
-    private ArrayList<ListItem> items = new ArrayList<ListItem>();
-    private ArrayList<HistoryEntry> history = new ArrayList<HistoryEntry>();
+    private ArrayList<ListItem> items;
+    private ArrayList<HistoryEntry> history;
     private HashMap<String, ListItem> selectedFiles = new HashMap<String, ListItem>();
     private long sizeLimit = 1024 * 1024 * 1024;
 
-    private String[] chhosefileType = {".pdf", ".epub"};
+    private String[] chhosefileType = {".pdf"};
+
 
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-
+        if (scrollY < 0) {
+            if (toolbarIsShown()) {
+                hideToolbar();
+            }
+        } else if (scrollY >= 0) {
+            if (toolbarIsHidden()) {
+                showToolbar();
+            }
+        }
     }
 
     @Override
@@ -125,7 +136,7 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
         return getActivity().findViewById(android.R.id.content).getHeight();
     }
 
-    private class HistoryEntry {
+    private class HistoryEntry implements Serializable {
         int scrollItem, scrollOffset;
         File dir;
         String title;
@@ -190,7 +201,13 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
         }
     };
 
-    private class ListItem {
+    protected ObservableListView createScrollable(View fragmentView) {
+        ObservableListView listView = (ObservableListView) fragmentView.findViewById(R.id.scrollable);
+
+        return listView;
+    }
+
+    private class ListItem implements Serializable {
         int icon;
         String title;
         String subtitle = "";
@@ -199,16 +216,17 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
         File file;
     }
 
-    protected ObservableListView createScrollable(View fragmentView) {
-        ObservableListView listView = (ObservableListView) fragmentView.findViewById(R.id.scrollable);
-
-        return listView;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        if (savedInstanceState != null) {
+            title_ = savedInstanceState.getString(getString(R.string.file_picker_title));
+            items = (ArrayList<ListItem>) savedInstanceState.getSerializable(getString(R.string.file_picker_list));
+            history = (ArrayList<HistoryEntry>) savedInstanceState.getSerializable(getString(R.string.file_picker_history_entry));
+        } else {
+            items = new ArrayList<>();
+            history = new ArrayList<>();
+        }
         if (!receiverRegistered) {
             receiverRegistered = true;
             IntentFilter filter = new IntentFilter();
@@ -230,7 +248,8 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
 
             toolbar = (Toolbar) fragmentView.findViewById(R.id.toolbar);
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-            toolbar.setTitle(R.string.folder_view);
+            toolbar.setTitle(R.string.app_name);
+            ((NavigationViewActivity) getActivity()).enableNavigationDrawer(true, toolbar);
 
             listAdapter = new ListAdapter(getActivity());
             emptyView = (TextView) fragmentView
@@ -335,7 +354,8 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
                 }
             });
 
-            listRoots();
+            if (savedInstanceState == null)
+                listRoots();
         } else {
             ViewGroup parent = (ViewGroup) fragmentView.getParent();
             if (parent != null) {
@@ -343,6 +363,14 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
             }
         }
         return fragmentView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(getString(R.string.file_picker_title), title_);
+        outState.putSerializable(getString(R.string.file_picker_list), items);
+        outState.putSerializable(getString(R.string.file_picker_history_entry), history);
     }
 
     private void listRoots() {
@@ -493,7 +521,7 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
             }
         });
         for (File file : files) {
-            if (!file.isDirectory() && !(file.getAbsolutePath().endsWith(".pdf") || file.getAbsolutePath().endsWith(".epub")))
+            if (!file.isDirectory() && !(file.getAbsolutePath().endsWith(".pdf")))
                 continue;
             if (file.getName().startsWith(".")) {
                 continue;

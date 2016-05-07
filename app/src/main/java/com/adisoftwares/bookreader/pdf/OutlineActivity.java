@@ -1,12 +1,12 @@
 package com.adisoftwares.bookreader.pdf;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,38 +19,35 @@ import com.artifex.mupdfdemo.MuPDFCore;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by adityathanekar on 16/01/16.
  */
 public class OutlineActivity extends AppCompatActivity implements OutlineItemSelected{
 
-    public static final String CORE_OBJECT = "com.adisoftwares.bookreader.pdf.core";
-    public static final String FILE_PATH = "com.adisoftwares.bookreader.pdf.file_path";
-    public static final String PAGE_NO = "com.adisoftwares.bookreader.pdf.page_no";
-    public static final String PAGE_NO_SELECTED = "com.adisoftwares.bookreader.pdf.page_no";
-    public static final int OUTLINE_ACTIVITY_RESULT_CODE = 0;
-
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @Bind(R.id.tabs)
+    @BindView(R.id.tabs)
     TabLayout tabLayout;
-    @Bind(R.id.viewpager)
+    @BindView(R.id.viewpager)
     ViewPager viewPager;
+
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_outline);
 
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(Utility.getFileNameFromUrl(getIntent().getStringExtra(FILE_PATH)));
+        getSupportActionBar().setTitle(Utility.getFileNameFromUrl(getIntent().getStringExtra(getString(R.string.file_path))));
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -65,6 +62,7 @@ public class OutlineActivity extends AppCompatActivity implements OutlineItemSel
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                setResult(RESULT_CANCELED);
                 finish();
                 break;
         }
@@ -72,28 +70,34 @@ public class OutlineActivity extends AppCompatActivity implements OutlineItemSel
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        MuPDFCore muPDFCore = (MuPDFCore)getIntent().getSerializableExtra(CORE_OBJECT);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
+        MuPDFCore muPDFCore = (MuPDFCore)getIntent().getSerializableExtra(getString(R.string.core_object));
         ThumbnailFragment thumbnailFragment = new ThumbnailFragment();
-        thumbnailFragment.setData(muPDFCore, getIntent().getStringExtra(FILE_PATH), getIntent().getIntExtra(PAGE_NO, 0));
+        thumbnailFragment.setData(muPDFCore, getIntent().getStringExtra(getString(R.string.file_path)), getIntent().getIntExtra(getString(R.string.page_no), 0));
         thumbnailFragment.setActivityCallbacks(this);
         TOCFragment tocFragment = TOCFragment.newInstance(muPDFCore);
         tocFragment.setActivityCallbacks(this);
-        adapter.addFragment(tocFragment, "Outline");
-        adapter.addFragment(thumbnailFragment, "Thumbnails");
+        BookmarkFragment bookmarkFragment = new BookmarkFragment();
+        bookmarkFragment.setActivityCallbacks(this);
+        bookmarkFragment.setData(muPDFCore, getIntent().getStringExtra(getString(R.string.file_path)));
+        adapter.addFragment(tocFragment, getString(R.string.outline));
+        adapter.addFragment(bookmarkFragment, getString(R.string.bookmarks));
+        adapter.addFragment(thumbnailFragment, getString(R.string.thumbnails));
         viewPager.setAdapter(adapter);
     }
 
     @Override
     public void outlineItemSelected(int position) {
         Intent data = new Intent();
-        data.putExtra(PAGE_NO_SELECTED, position);
-        setResult(OUTLINE_ACTIVITY_RESULT_CODE, data);
+        data.putExtra(getString(R.string.page_no_selected), position);
+        setResult(RESULT_OK, data);
         finish();
     }
 
     @Override
     public void onBackPressed() {
+        setResult(RESULT_CANCELED);
+        overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_bottom);
         finish();
     }
 
@@ -124,5 +128,11 @@ public class OutlineActivity extends AppCompatActivity implements OutlineItemSel
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 }

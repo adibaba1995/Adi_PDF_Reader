@@ -27,7 +27,7 @@ public class LastAddedFragment extends BookFragment {
         Bundle arguments = getArguments();
         String bookName = null;
         if (arguments != null)
-            bookName = args.getString(TITLE);
+            bookName = args.getString(getString(R.string.book_title));
         if (bookName == null)
             bookName = "";
         String[] selectionArgs = new String[]{"%" + bookName + ".pdf"};

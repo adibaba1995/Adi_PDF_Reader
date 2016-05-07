@@ -36,6 +36,8 @@
                 <action android:name="android.intent.action.VIEW" />
                 <data android:mimeType="application/pdf" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <meta-data android:name="android.app.searchable"
+                    android:resource="@xml/search_word" />
             </intent-filter>
         </activity>
 
@@ -47,9 +49,25 @@
             android:name=".database.BookContentProvider"
             android:exported="true"
             android:grantUriPermissions="true"
-            android:label="BookContentProvider"
-            android:readPermission="com.adisoftwares.bookreader.READ"
-            android:writePermission="com.adisoftwares.bookreader.WRITE"/>
+            android:label="BookContentProvider" />
+
+        <service android:name="com.adisoftwares.bookreader.drive.DownloadService" >
+        </service>
+
+        <!-- Widget service -->
+        <service
+            android:name="com.adisoftwares.bookreader.widget.WidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <receiver android:name="com.adisoftwares.bookreader.widget.WidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/book_widget_provider" />
+        </receiver>
 
     </application>
 

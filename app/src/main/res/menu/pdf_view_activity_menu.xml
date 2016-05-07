@@ -2,7 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/bookmark" android:icon="@drawable/bookmark_border" android:title="@string/bookmark" app:showAsAction="always" />
-    <item android:id="@+id/copy" android:icon="@drawable/copy" android:title="@string/copy" app:showAsAction="always"/>
-    <item android:id="@+id/reflow" android:title="@string/reflow_text" />
-    <item android:id="@+id/print" android:title="@string/print"/>
+    <item android:id="@+id/search"
+        android:title="@string/search_word"
+        android:icon="@drawable/search"
+        app:showAsAction="always"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+    <item android:id="@+id/copy" android:title="@string/copy" app:showAsAction="never"/>
+    <item android:id="@+id/reflow" android:title="@string/reflow_text" app:showAsAction="never"/>
+    <item android:id="@+id/print" android:title="@string/print" app:showAsAction="never"/>
 </menu>

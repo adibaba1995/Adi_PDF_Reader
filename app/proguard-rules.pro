@@ -18,7 +18,7 @@
 -keep class butterknife.** { *; }
 -dontwarn butterknife.internal.**
 -keep class **$$ViewBinder { *; }
-
+-dontwarn sun.misc.Unsafe
 -keepclasseswithmembernames class * {
     @butterknife.* <fields>;
 }
@@ -26,3 +26,12 @@
 -keepclasseswithmembernames class * {
     @butterknife.* <methods>;
 }
+
+-keep class android.support.** { *; }
+-keep interface android.support.** { *; }
+
+-keep class com.artifex.mupdfdemo.** { *; }
+-keep interface com.artifex.mupdfdemo.** { *; }
+-keep enum com.artifex.mupdfdemo.** { *; }
+
+

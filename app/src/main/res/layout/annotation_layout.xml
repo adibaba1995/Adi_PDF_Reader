@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:background="@color/toolbar"
+    android:id="@+id/topBar2Annot"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageButton
+        android:background="@drawable/button"
+        android:contentDescription="@string/cancel"
+        android:id="@+id/cancelAnnotButton"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:onClick="OnCancelAnnotButtonClick"
+        android:src="@drawable/ic_cancel" />
+
+    <ImageButton
+        android:background="@drawable/button"
+        android:contentDescription="@string/highlight"
+        android:id="@+id/highlightButton"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/underlineButton"
+        android:layout_width="wrap_content"
+        android:onClick="OnHighlightButtonClick"
+        android:src="@drawable/ic_highlight" />
+
+    <ImageButton
+        android:background="@drawable/button"
+        android:contentDescription="@string/underline"
+        android:id="@+id/underlineButton"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/strikeOutButton"
+        android:layout_width="wrap_content"
+        android:onClick="OnUnderlineButtonClick"
+        android:src="@drawable/ic_underline" />
+
+    <ImageButton
+        android:background="@drawable/button"
+        android:contentDescription="@string/strike_out"
+        android:id="@+id/strikeOutButton"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/inkButton"
+        android:layout_width="wrap_content"
+        android:onClick="OnStrikeOutButtonClick"
+        android:src="@drawable/ic_strike" />
+
+    <ImageButton
+        android:background="@drawable/button"
+        android:contentDescription="@string/ink"
+        android:id="@+id/inkButton"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:onClick="OnInkButtonClick"
+        android:src="@drawable/ic_pen" />
+
+</RelativeLayout>

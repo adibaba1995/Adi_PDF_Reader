@@ -1,32 +1,16 @@
 package com.adisoftwares.bookreader;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.provider.MediaStore;
-import android.support.v4.util.LruCache;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.artifex.mupdfdemo.MuPDFCore;
-
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -86,9 +70,9 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BooksViewHol
 
     class BooksViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @Bind(R.id.thumbnail)
+        @BindView(R.id.thumbnail)
         ImageView thumbnail;
-        @Bind(R.id.display_name)
+        @BindView(R.id.display_name)
         TextView title;
 
         public BooksViewHolder(View itemView) {
