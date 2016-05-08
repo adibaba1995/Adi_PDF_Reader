@@ -33,7 +33,8 @@
     android:layout_marginRight="@dimen/grid_margin"
     android:layout_marginTop="@dimen/grid_margin"
     android:clickable="true"
-    android:gravity="center">
+    android:gravity="center"
+    android:layout_marginEnd="@dimen/grid_margin">
 
     <ImageView
         android:id="@+id/thumbnail"
@@ -51,7 +52,9 @@
         android:background="#00000000"
         android:gravity="center"
         android:padding="8dp"
-        android:stretchColumns="*">
+        android:stretchColumns="*"
+        android:layout_alignStart="@+id/thumbnail"
+        android:layout_alignEnd="@+id/thumbnail">
 
         <TableRow>
 

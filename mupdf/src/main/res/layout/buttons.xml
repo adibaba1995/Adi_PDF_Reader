@@ -28,7 +28,10 @@
 				android:singleLine="true"
 				android:textColor="#FFFFFF"
 				android:textStyle="bold"
-				android:textAppearance="?android:attr/textAppearanceMedium" />
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:layout_toStartOf="@+id/linkButton"
+				android:paddingStart="16dp"
+				android:layout_alignParentStart="true" />
 
 			<ImageButton
 				android:id="@+id/sepsButton"
@@ -39,7 +42,8 @@
 				android:contentDescription="Separations"
 				android:background="@drawable/button"
 				android:onClick="OnSepsButtonClick"
-				android:src="@drawable/ic_sep" />
+				android:src="@drawable/ic_sep"
+				android:layout_alignParentEnd="true" />
 
 			<ImageButton
 				android:id="@+id/linkButton"
@@ -49,7 +53,8 @@
 				android:layout_toLeftOf="@+id/reflowButton"
 				android:contentDescription="@string/toggle_links"
 				android:background="@drawable/button"
-				android:src="@drawable/ic_link" />
+				android:src="@drawable/ic_link"
+				android:layout_toStartOf="@+id/reflowButton" />
 
 			<ImageButton
 				android:id="@+id/reflowButton"
@@ -59,7 +64,8 @@
 				android:layout_toLeftOf="@+id/outlineButton"
 				android:contentDescription="@string/toggle_reflow_mode"
 				android:background="@drawable/button"
-				android:src="@drawable/ic_reflow" />
+				android:src="@drawable/ic_reflow"
+				android:layout_toStartOf="@+id/outlineButton" />
 
 			<ImageButton
 				android:id="@+id/outlineButton"
@@ -69,7 +75,8 @@
 				android:layout_toLeftOf="@+id/searchButton"
 				android:contentDescription="@string/outline_title"
 				android:background="@drawable/button"
-				android:src="@drawable/ic_list" />
+				android:src="@drawable/ic_list"
+				android:layout_toStartOf="@+id/searchButton" />
 
 			<ImageButton
 				android:id="@+id/searchButton"
@@ -79,7 +86,8 @@
 				android:layout_toLeftOf="@+id/moreButton"
 				android:contentDescription="@string/search_document"
 				android:background="@drawable/button"
-				android:src="@drawable/ic_magnifying_glass" />
+				android:src="@drawable/ic_magnifying_glass"
+				android:layout_toStartOf="@+id/moreButton" />
 
 			<ImageButton
 				android:id="@+id/moreButton"
@@ -90,7 +98,8 @@
 				android:contentDescription="@string/more"
 				android:background="@drawable/button"
 				android:onClick="OnMoreButtonClick"
-				android:src="@drawable/ic_more" />
+				android:src="@drawable/ic_more"
+				android:layout_alignParentEnd="true" />
 
 		</RelativeLayout>
 
@@ -109,7 +118,8 @@
 				android:contentDescription="@string/cancel"
 				android:background="@drawable/button"
 				android:onClick="OnCancelSearchButtonClick"
-				android:src="@drawable/ic_cancel" />
+				android:src="@drawable/ic_cancel"
+				android:layout_alignParentStart="true" />
 
 			<EditText
 				android:id="@+id/searchText"
@@ -121,7 +131,9 @@
 				android:layout_toLeftOf="@+id/searchBack"
 				android:inputType="text"
 				android:hint="@string/search"
-				android:singleLine="true" />
+				android:singleLine="true"
+				android:layout_toEndOf="@+id/cancelSearch"
+				android:layout_toStartOf="@+id/searchBack" />
 
 			<ImageButton
 				android:id="@+id/searchBack"
@@ -131,7 +143,8 @@
 				android:layout_toLeftOf="@+id/searchForward"
 				android:contentDescription="@string/search_backwards"
 				android:background="@drawable/button"
-				android:src="@drawable/ic_arrow_left" />
+				android:src="@drawable/ic_arrow_left"
+				android:layout_toStartOf="@+id/searchForward" />
 
 			<ImageButton
 				android:id="@+id/searchForward"
@@ -141,7 +154,8 @@
 				android:layout_alignParentRight="true"
 				android:contentDescription="@string/search_forwards"
 				android:background="@drawable/button"
-				android:src="@drawable/ic_arrow_right" />
+				android:src="@drawable/ic_arrow_right"
+				android:layout_alignParentEnd="true" />
 
 		</RelativeLayout>
 
@@ -160,7 +174,8 @@
 				android:contentDescription="@string/cancel"
 				android:background="@drawable/button"
 				android:onClick="OnCancelAnnotButtonClick"
-				android:src="@drawable/ic_cancel" />
+				android:src="@drawable/ic_cancel"
+				android:layout_alignParentStart="true" />
 
 			<ImageButton
 				android:id="@+id/highlightButton"
@@ -171,7 +186,8 @@
 				android:contentDescription="@string/highlight"
 				android:background="@drawable/button"
 				android:onClick="OnHighlightButtonClick"
-				android:src="@drawable/ic_highlight" />
+				android:src="@drawable/ic_highlight"
+				android:layout_toStartOf="@+id/underlineButton" />
 
 			<ImageButton
 				android:id="@+id/underlineButton"
@@ -182,7 +198,8 @@
 				android:contentDescription="@string/underline"
 				android:background="@drawable/button"
 				android:onClick="OnUnderlineButtonClick"
-				android:src="@drawable/ic_underline" />
+				android:src="@drawable/ic_underline"
+				android:layout_toStartOf="@+id/strikeOutButton" />
 
 			<ImageButton
 				android:id="@+id/strikeOutButton"
@@ -193,7 +210,8 @@
 				android:contentDescription="@string/strike_out"
 				android:background="@drawable/button"
 				android:onClick="OnStrikeOutButtonClick"
-				android:src="@drawable/ic_strike" />
+				android:src="@drawable/ic_strike"
+				android:layout_toStartOf="@+id/inkButton" />
 
 			<ImageButton
 				android:id="@+id/inkButton"
@@ -204,7 +222,8 @@
 				android:contentDescription="@string/ink"
 				android:background="@drawable/button"
 				android:onClick="OnInkButtonClick"
-				android:src="@drawable/ic_pen" />
+				android:src="@drawable/ic_pen"
+				android:layout_alignParentEnd="true" />
 
 		</RelativeLayout>
 
@@ -223,7 +242,8 @@
 				android:contentDescription="@string/cancel"
 				android:background="@drawable/button"
 				android:onClick="OnCancelDeleteButtonClick"
-				android:src="@drawable/ic_cancel" />
+				android:src="@drawable/ic_cancel"
+				android:layout_alignParentStart="true" />
 
 			<TextView
 				android:id="@+id/deleteLabel"
@@ -237,7 +257,9 @@
 				android:textColor="#FFFFFF"
 				android:textStyle="bold"
 				android:text="@string/delete"
-				android:textAppearance="?android:attr/textAppearanceMedium" />
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:layout_toStartOf="@+id/deleteButton"
+				android:layout_toEndOf="@+id/cancelDeleteButton" />
 
 			<ImageButton
 				android:id="@+id/deleteButton"
@@ -248,7 +270,8 @@
 				android:contentDescription="@string/delete"
 				android:background="@drawable/button"
 				android:onClick="OnDeleteButtonClick"
-				android:src="@drawable/ic_trash" />
+				android:src="@drawable/ic_trash"
+				android:layout_alignParentEnd="true" />
 
 		</RelativeLayout>
 
@@ -267,7 +290,8 @@
 				android:contentDescription="@string/cancel"
 				android:background="@drawable/button"
 				android:onClick="OnCancelMoreButtonClick"
-				android:src="@drawable/ic_cancel" />
+				android:src="@drawable/ic_cancel"
+				android:layout_alignParentStart="true" />
 
 			<ImageButton
 				android:id="@+id/proofButton"
@@ -278,7 +302,8 @@
 				android:contentDescription="@string/proof"
 				android:background="@drawable/button"
 				android:onClick="OnProofButtonClick"
-				android:src="@drawable/ic_proof" />
+				android:src="@drawable/ic_proof"
+				android:layout_toStartOf="@+id/printButton" />
 
 			<ImageButton
 				android:id="@+id/printButton"
@@ -289,7 +314,8 @@
 				android:contentDescription="@string/print"
 				android:background="@drawable/button"
 				android:onClick="OnPrintButtonClick"
-				android:src="@drawable/ic_print" />
+				android:src="@drawable/ic_print"
+				android:layout_toStartOf="@+id/copyTextButton" />
 
 			<ImageButton
 				android:id="@+id/copyTextButton"
@@ -301,7 +327,8 @@
 				android:contentDescription="@string/copy_text_to_the_clipboard"
 				android:background="@drawable/button"
 				android:onClick="OnCopyTextButtonClick"
-				android:src="@drawable/ic_clipboard" />
+				android:src="@drawable/ic_clipboard"
+				android:layout_toStartOf="@+id/editAnnotButton" />
 
 			<ImageButton
 				android:id="@+id/editAnnotButton"
@@ -312,7 +339,8 @@
 				android:contentDescription="@string/edit_annotations"
 				android:background="@drawable/button"
 				android:onClick="OnEditAnnotButtonClick"
-				android:src="@drawable/ic_annotation" />
+				android:src="@drawable/ic_annotation"
+				android:layout_alignParentEnd="true" />
 		</RelativeLayout>
 
 		<RelativeLayout
@@ -330,7 +358,8 @@
 				android:contentDescription="@string/cancel"
 				android:background="@drawable/button"
 				android:onClick="OnCancelAcceptButtonClick"
-				android:src="@drawable/ic_cancel" />
+				android:src="@drawable/ic_cancel"
+				android:layout_alignParentStart="true" />
 
 			<TextView
 				android:id="@+id/annotType"
@@ -343,7 +372,9 @@
 				android:singleLine="true"
 				android:textColor="#FFFFFF"
 				android:textStyle="bold"
-				android:textAppearance="?android:attr/textAppearanceMedium" />
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:layout_toEndOf="@+id/cancelAcceptButton"
+				android:layout_toStartOf="@+id/acceptButton" />
 
 			<ImageButton
 				android:id="@+id/acceptButton"
@@ -354,7 +385,8 @@
 				android:contentDescription="@string/accept"
 				android:background="@drawable/button"
 				android:onClick="OnAcceptButtonClick"
-				android:src="@drawable/ic_check" />
+				android:src="@drawable/ic_check"
+				android:layout_alignParentEnd="true" />
 		</RelativeLayout>
 		</ViewAnimator>
 
@@ -379,7 +411,8 @@
 			android:paddingTop="12dp"
 			android:paddingBottom="8dp"
 			android:background="@color/toolbar"
-			/>
+			android:paddingEnd="16dp"
+			android:paddingStart="16dp" />
 
 		<TextView
 			android:id="@+id/pageNumber"

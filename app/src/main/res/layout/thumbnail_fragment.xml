@@ -5,4 +5,5 @@
     android:layout_height="match_parent"
     android:columnWidth="@dimen/column_width"
     android:layout_marginLeft="@dimen/grid_margin"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginStart="@dimen/grid_margin" />

@@ -37,6 +37,7 @@ import android.provider.MediaStore.Files;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.adisoftwares.bookreader.pdf.PdfViewActivity;
 import com.adisoftwares.bookreader.view.AutofitRecyclerView;
@@ -60,7 +61,6 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
     protected BooksAdapter adapter;
 
     protected View emptyView;
-    private View errorView;
 
     protected Cursor cursor = null, filesCursor;
 
@@ -82,6 +82,8 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
     private Unbinder unbinder;
 
     private String bookName = null;
+
+    private Menu bookMenu;
 
     public interface SearchViewTextSubmitted {
         public void submitText(String text);
@@ -128,20 +130,6 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
             toolbar.setSubtitle(R.string.documents);
         }
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            errorView = getActivity().getLayoutInflater().inflate(R.layout.book_error_view, recyclerView, false);
-            ((Button) errorView.findViewById(R.id.error_button)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    FragmentCompat.requestPermissions(BookFragment.this,
-                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                            REQUEST_READ_EXTERNAL_STORAGE);
-                }
-            });
-        }
-
-        emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, recyclerView, false);
-
         adapter = new BooksAdapter(getActivity(), null);
         recyclerView.setAdapter(adapter);
 //        recyclerView.setAdapter(adapter);
@@ -157,7 +145,22 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
 
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            recyclerViewContainer.addView(errorView);
+            setSearcViewVisiblity(false);
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, null, false);
+                ((TextView) emptyView.findViewById(R.id.empty_text)).setText(R.string.need_to_allow_access);
+            } else {
+                emptyView = getActivity().getLayoutInflater().inflate(R.layout.book_error_view, null, false);
+                ((Button) emptyView.findViewById(R.id.error_button)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        FragmentCompat.requestPermissions(BookFragment.this,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                REQUEST_READ_EXTERNAL_STORAGE);
+                    }
+                });
+            }
+            addView(emptyView);
         }
 
         ((NavigationViewActivity) getActivity()).enableNavigationDrawer(true, toolbar);
@@ -194,6 +197,16 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
         return rootView;
     }
 
+    private void setSearcViewVisiblity(boolean visiblity) {
+        if (bookMenu != null)
+            bookMenu.findItem(R.id.search).setVisible(false);
+    }
+
+    private void addView(View view) {
+        recyclerViewContainer.removeAllViews();
+        recyclerViewContainer.addView(view);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -211,6 +224,11 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.book_grid_menu, menu);
+        bookMenu = menu;
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            setSearcViewVisiblity(false);
+        }
     }
 
     @Override
@@ -290,8 +308,26 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
         switch (requestCode) {
             case REQUEST_READ_EXTERNAL_STORAGE:
                 if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    recyclerViewContainer.removeView(errorView);
+                    setSearcViewVisiblity(true);
+                    addView(recyclerView);
                     ((AppCompatActivity) getActivity()).getSupportLoaderManager().initLoader(FILES_LOADER, null, this);
+                } else {
+                    setSearcViewVisiblity(false);
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, null, false);
+                        ((TextView) emptyView.findViewById(R.id.empty_text)).setText(R.string.need_to_allow_access);
+                    } else {
+                        emptyView = getActivity().getLayoutInflater().inflate(R.layout.book_error_view, null, false);
+                        ((Button) emptyView.findViewById(R.id.error_button)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                FragmentCompat.requestPermissions(BookFragment.this,
+                                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                        REQUEST_READ_EXTERNAL_STORAGE);
+                            }
+                        });
+                    }
+                    addView(emptyView);
                 }
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -316,7 +352,14 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         filesCursor = data;
-        adapter.swapCursor(data);
+        if (data.getCount() == 0) {
+            emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, null, false);
+            ((TextView) emptyView.findViewById(R.id.empty_text)).setText(R.string.no_files_available);
+            addView(emptyView);
+        } else {
+            addView(recyclerView);
+            adapter.swapCursor(data);
+        }
     }
 
     @Override

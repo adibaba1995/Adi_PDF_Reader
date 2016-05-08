@@ -19,6 +19,7 @@
 		android:layout_height="wrap_content"
 		android:paddingLeft="16dp"
 		android:textColor="@android:color/black"
-		android:textAppearance="?android:attr/textAppearanceMedium" />
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:paddingStart="16dp" />
 
 </LinearLayout>

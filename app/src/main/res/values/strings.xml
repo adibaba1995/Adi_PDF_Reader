@@ -85,6 +85,7 @@
     <!--BookFragment-->
     <string name="book_title" translatable="false">com.adisoftwares.bookreader.title</string>
     <string name="file_picker_title" translatable="false">com.adisoftwares.bookreader.title</string>
+    <string name="no_files_available">There are no pdf files available in the device.</string>
 
     <!--Database-->
     <string name="unknown_uri">Unknown uri: </string>
@@ -172,5 +173,6 @@
     <string name="empty">Empty</string>
     <string name="ip_address_content_desc">IP address</string>
     <string name="work_in_progress">Work in progress</string>
+    <string name="need_to_allow_access">You need to allow access to storage</string>
 
 </resources>

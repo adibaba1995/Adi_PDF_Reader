@@ -50,7 +50,8 @@
                 android:textColor="@color/black87"
                 android:textSize="16sp"
                 android:layout_marginLeft="8dp"
-                android:contentDescription="@string/page_no"/>
+                android:contentDescription="@string/page_no"
+                android:layout_marginStart="8dp" />
 
         </LinearLayout>
 

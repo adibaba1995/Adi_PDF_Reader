@@ -38,7 +38,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/grid_margin"
                 android:columnWidth="@dimen/column_width"
-                android:contentDescription="@string/list_of_books"/>
+                android:contentDescription="@string/list_of_books"
+                android:layout_marginStart="@dimen/grid_margin" />
 
         </FrameLayout>
 
@@ -46,7 +47,7 @@
             android:id="@+id/read_last"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right|end"
+            android:layout_gravity="bottom|end|end"
             android:layout_margin="16dp"
             app:fabSize="normal"
             app:layout_behavior="com.adisoftwares.bookreader.ScrollingFABBehavior"
