@@ -26,6 +26,7 @@ import butterknife.Unbinder;
 /**
  * Created by adityathanekar on 16/01/16.
  */
+//This class displays the items such as table of contents, bookmarks and thumbnails of pages.
 public class OutlineActivity extends AppCompatActivity implements OutlineItemSelected{
 
     @BindView(R.id.toolbar)

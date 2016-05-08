@@ -2,33 +2,20 @@ package com.adisoftwares.bookreader.drive;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.Arrays;
 
-import android.app.Activity;
 import android.app.IntentService;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaScannerConnection;
-import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
-import android.os.Message;
-import android.os.Messenger;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.adisoftwares.bookreader.BookReaderApplication;
-import com.adisoftwares.bookreader.Preference;
 import com.adisoftwares.bookreader.R;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -41,7 +28,7 @@ import com.google.api.services.drive.DriveScopes;
 /**
  * Created by adityathanekar on 03/05/16.
  */
-
+//This service is used to download the pdf files from google drive.
 public class DownloadService extends IntentService {
 
     private com.google.api.services.drive.Drive mService;
@@ -58,7 +45,7 @@ public class DownloadService extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        SharedPreferences settings = getApplicationContext().getSharedPreferences(Preference.PREFERENCE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences settings = getApplicationContext().getSharedPreferences(getString(R.string.preference_book_info), Context.MODE_PRIVATE);
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff())
@@ -78,6 +65,9 @@ public class DownloadService extends IntentService {
                 .build();
 
         try {
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath());
+            if(!file.exists())
+                file.mkdir();
             publishResults(getApplicationContext().getString(R.string.downloading) + intent.getStringExtra(getApplicationContext().getString(R.string.google_drive_file_name)), true);
             OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/" + intent.getStringExtra(getApplicationContext().getString(R.string.google_drive_file_name))));
             mService.files().get(intent.getStringExtra(getApplicationContext().getString(R.string.google_drive_file_id))).executeMediaAndDownloadTo(outputStream);

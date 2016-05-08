@@ -1,9 +1,5 @@
 package com.adisoftwares.bookreader.cache;
 
-/**
- * Created by adityathanekar on 26/03/16.
- */
-
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;

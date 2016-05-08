@@ -24,6 +24,7 @@ import butterknife.Unbinder;
 /**
  * Created by adityathanekar on 29/04/16.
  */
+//This is the wifi sharing class.
 public class WifiFragment extends Fragment{
 
     private HelloServer mServer;

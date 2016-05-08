@@ -5,6 +5,9 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -55,17 +58,22 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
         mView.setTextViewText(R.id.display_name, Utility.getFileNameFromUrl(data.getPath()));
         mView.setImageViewBitmap(R.id.thumbnail, LoadBookImage.get().loadBitmap(150, 200, data, position));
 
-        PendingIntent pendingIntent;
-        Intent intent = new Intent();
-        intent.setClass(mContext,PdfViewActivity.class);
-        pendingIntent =  PendingIntent.getActivity(mContext, 0, intent, 0);
-        mView.setOnClickPendingIntent(R.id.thumbnail, pendingIntent);
-//        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(BookDataSingleton.getInstance().get(position).getPath()), BookReaderApplication.getContext(), PdfViewActivity.class);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(BookReaderApplication.getContext(), 0, intent, 0);
-//        mView.setOnClickPendingIntent(R.id.widget_item, pendingIntent);
+//        Intent intent = new Intent(mContext, PdfViewActivity.class);
+//        intent.setAction(Intent.ACTION_VIEW);
+//        Uri uri = Uri.parse(data.getPath());
+//        intent.setData(uri);
+//        PendingIntent configPendingIntent = PendingIntent.getActivity(mContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        mView.setOnClickPendingIntent(R.id.widgetCollectionGrid, configPendingIntent);
 
 
-//        LoadBookImage.get().loadBitmap(data.getPath(), holder.thumbnail, holder.thumbnail.getWidth(), holder.thumbnail.getHeight(), 0, bookData);
+        final Intent fillInIntent = new Intent();
+        fillInIntent.setAction(Intent.ACTION_VIEW);
+        fillInIntent.setData(Uri.parse(data.getPath()));
+        mView.setOnClickFillInIntent(R.id.widget_item, fillInIntent);
+
+//
+//        mView.setOnClickFillInIntent(R.id.widgetCollectionGrid, intent);
+
         return mView;
     }
 

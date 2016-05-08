@@ -34,7 +34,7 @@ public class TOCFragment extends Fragment implements ThumbnailAdapter.OnRecycler
 
     private OutlineItemSelected outlineItemSelected;
 
-    private OutlineAdapter outlineAdapter= null;
+    private OutlineAdapter outlineAdapter = null;
 
     @BindView(R.id.outline_recycler_view)
     RecyclerView outlineRecyclerView;
@@ -42,6 +42,8 @@ public class TOCFragment extends Fragment implements ThumbnailAdapter.OnRecycler
     FrameLayout toc_container;
 
     Unbinder unbinder;
+
+    private OutlineTask outlineTask;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,15 +60,8 @@ public class TOCFragment extends Fragment implements ThumbnailAdapter.OnRecycler
         // Restore the position within the list from last viewing
         outlineRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        //outlineRecyclerView.lineListView.setSelection(OutlineActivityData.get().position);
-        //outlineListView.setDividerHeight(0);
-        //outlineListView.setEmptyView(rootView.findViewById(R.id.circularProgress));
-
-        //outlineListView.setOnItemClickListener(this);
-
-        //mCore = (MuPDFCore)getArguments().getSerializable(CORE_OBJECT);
-
-        new OutlineTask().execute();
+        outlineTask = new OutlineTask();
+        outlineTask.execute();
 
         return rootView;
 
@@ -88,30 +83,39 @@ public class TOCFragment extends Fragment implements ThumbnailAdapter.OnRecycler
     class OutlineTask extends AsyncTask<Void, Void, Void> {
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            View emptyView = getActivity().getLayoutInflater().inflate(R.layout.progress_bar, null);
+            toc_container.removeAllViews();
+            toc_container.addView(emptyView);
+        }
+
+        @Override
         protected Void doInBackground(Void... params) {
-            mItems = ((MuPDFCore)getArguments().getSerializable(getString(R.string.pdf_core))).getOutline();
+            mItems = ((MuPDFCore) getArguments().getSerializable(getString(R.string.pdf_core))).getOutline();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if(mItems != null) {
+            toc_container.removeAllViews();
+            toc_container.addView(outlineRecyclerView);
+            if (mItems != null) {
                 OutlineAdapter outlineAdapter = new OutlineAdapter(getActivity().getLayoutInflater(), mItems, getActivity());
                 outlineAdapter.setOutlineItemSelected(new OutlineAdapter.OutlineItemSelected() {
                     @Override
                     public void onItemClick(View view, int position) {
 //                        OutlineActivityData.get().position = outlineListView.getFirstVisiblePosition();
-                        if(outlineItemSelected != null)
+                        if (outlineItemSelected != null)
                             outlineItemSelected.outlineItemSelected(position);
                     }
                 });
                 outlineRecyclerView.setAdapter(outlineAdapter);
-            }
-            else {
+            } else {
                 View emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, null);
-                ((TextView)emptyView.findViewById(R.id.empty_text)).setText(R.string.empty_toc);
-                ((TextView)emptyView.findViewById(R.id.empty_text)).setTextColor(getResources().getColor(android.R.color.black));
+                ((TextView) emptyView.findViewById(R.id.empty_text)).setText(R.string.empty_toc);
+                ((TextView) emptyView.findViewById(R.id.empty_text)).setTextColor(getResources().getColor(android.R.color.black));
                 toc_container.addView(emptyView);
             }
             //outlineListView.setAdapter(new OutlineAdapter(getActivity().getLayoutInflater(),mItems, getActivity()));
@@ -126,5 +130,7 @@ public class TOCFragment extends Fragment implements ThumbnailAdapter.OnRecycler
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+        if (outlineTask != null)
+            outlineTask.cancel(true);
     }
 }

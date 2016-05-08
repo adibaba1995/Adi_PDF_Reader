@@ -111,7 +111,7 @@ public class BookContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException(BookReaderApplication.getContext().getString(R.string.unknown_uri) + uri);
         }
-        //Note: we should not return uri instead we should use passed in uri because otherwise it will not correctly notify cursors of the change.
+        //we should not return uri instead we should use passed in uri because otherwise it will not correctly notify cursors of the change.
         getContext().getContentResolver().notifyChange(uri, null);
         db.close();
         return returnUri;
@@ -163,17 +163,12 @@ public class BookContentProvider extends ContentProvider {
     }
 
     static UriMatcher buildUriMatcher() {
-        // 1) The code passed into the constructor represents the code to return for the root
-        // URI.  It's common to use NO_MATCH as the code for this case. Add the constructor below.
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = BookContract.CONTENT_AUTHORITY;
 
-        // 2) Use the addURI function to match each of the types.  Use the constants from
-        // WeatherContract to help define the types to the UriMatcher.
         matcher.addURI(authority, BookContract.PATH_PDF_BOOKMARK, BOOKMARKS);
         matcher.addURI(authority, BookContract.PATH_PDF_RECENTS, RECENTS);
 
-        // 3) Return the new matcher!
         return matcher;
     }
 }

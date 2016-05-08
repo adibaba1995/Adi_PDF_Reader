@@ -10,13 +10,20 @@ android {
         versionName "1.0"
         multiDexEnabled true
     }
+    signingConfigs {
+        release {
+            storeFile file('../adi_book_reader.jks')
+            storePassword 'adibaba'
+            keyAlias 'bookreader'
+            keyPassword 'adibaba'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
-    }
-    productFlavors {
     }
 }
 

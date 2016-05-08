@@ -27,7 +27,7 @@ import butterknife.Unbinder;
  */
 //This is the class for the activity which starts as soon as the app starts.
 //It contains the navigation drawer and the fragments are added or removed as needed.
-public class NavigationViewActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BookFragment.SearchViewTextSubmitted {
+public class NavigationViewActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BookFragment.ChangeListener {
 
     @BindView(R.id.navigationView)
     NavigationView navigationView;

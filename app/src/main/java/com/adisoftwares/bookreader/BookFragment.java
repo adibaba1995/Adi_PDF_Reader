@@ -9,10 +9,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,10 +25,10 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.provider.MediaStore.Files;
@@ -38,12 +36,12 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.adisoftwares.bookreader.pdf.PdfViewActivity;
 import com.adisoftwares.bookreader.view.AutofitRecyclerView;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
 import butterknife.BindView;
@@ -83,16 +81,17 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
 
     private String bookName = null;
 
-    private Menu bookMenu;
+    private Thread thread;
+    private Handler handler;
 
-    public interface SearchViewTextSubmitted {
+    public interface ChangeListener {
         public void submitText(String text);
     }
 
-    private SearchViewTextSubmitted searchViewTextSubmitted;
+    private ChangeListener changeListener;
 
-    public BookFragment setSearchViewTextSubmittedListener(SearchViewTextSubmitted searchViewTextSubmitted) {
-        this.searchViewTextSubmitted = searchViewTextSubmitted;
+    public BookFragment setSearchViewTextSubmittedListener(ChangeListener changeListener) {
+        this.changeListener = changeListener;
         return this;
     }
 
@@ -118,12 +117,15 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
         unbinder = ButterKnife.bind(this, rootView);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((NavigationViewActivity) getActivity()).enableNavigationDrawer(true, toolbar);
 
         Bundle arguments = getArguments();
         if (arguments != null) {
             bookName = arguments.getString(getString(R.string.book_title));
-            if (bookName != null)
+            if (bookName != null) {
                 toolbar.setSubtitle(bookName);
+                ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
         }
         if (arguments == null && bookName == null) {
             bookName = "";
@@ -145,7 +147,6 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
 
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            setSearcViewVisiblity(false);
             if (!ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, null, false);
                 ((TextView) emptyView.findViewById(R.id.empty_text)).setText(R.string.need_to_allow_access);
@@ -161,18 +162,17 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
                 });
             }
             addView(emptyView);
+        } else {
         }
-
-        ((NavigationViewActivity) getActivity()).enableNavigationDrawer(true, toolbar);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openBook(getActivity().getSharedPreferences(Preference.PREFERENCE_NAME, Context.MODE_PRIVATE).getString(Preference.LAST_READ_BOOK_PATH, ""));
+                openBook(getActivity().getSharedPreferences(getString(R.string.preference_book_info), Context.MODE_PRIVATE).getString(getString(R.string.preference_last_read_book_path), ""));
             }
         });
 
-        if (!getActivity().getSharedPreferences(Preference.PREFERENCE_NAME, Context.MODE_PRIVATE).contains(Preference.LAST_READ_BOOK_PATH))
+        if (!getActivity().getSharedPreferences(getString(R.string.preference_book_info), Context.MODE_PRIVATE).contains(getString(R.string.preference_last_read_book_path)))
             fab.setVisibility(View.INVISIBLE);
 
         Handler handler = new Handler();
@@ -197,12 +197,7 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
         return rootView;
     }
 
-    private void setSearcViewVisiblity(boolean visiblity) {
-        if (bookMenu != null)
-            bookMenu.findItem(R.id.search).setVisible(false);
-    }
-
-    private void addView(View view) {
+    protected void addView(View view) {
         recyclerViewContainer.removeAllViews();
         recyclerViewContainer.addView(view);
     }
@@ -224,11 +219,6 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.book_grid_menu, menu);
-        bookMenu = menu;
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            setSearcViewVisiblity(false);
-        }
     }
 
     @Override
@@ -256,43 +246,27 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (searchViewTextSubmitted != null)
-                    searchViewTextSubmitted.submitText(query);
-                return true;
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getActivity(), R.string.permission_denied, Toast.LENGTH_SHORT).show();
+                    return false;
+                } else {
+                    if (changeListener != null)
+                        changeListener.submitText(query);
+                    return true;
+                }
             }
 
             @Override
             public boolean onQueryTextChange(final String newText) {
-
-                final Handler messageHandler = new Handler() {
-                    public void handleMessage(Message msg) {
-                        if (cursor != null) {
-                            adapter.changeCursor(cursor);
-                        }
-                    }
-                };
-
-                new Thread() {
-                    public void run() {
-                        Uri uri = Files.getContentUri(getString(R.string.files_content_uri_external));
-                        String[] projection = {Files.FileColumns._ID, Files.FileColumns.DATA};
-                        String sortOrder = Files.FileColumns.TITLE + " ASC";
-                        String selection = Files.FileColumns.MIME_TYPE + " = ? AND " + Files.FileColumns.DATA + " LIKE ?";
-                        String[] selectionArgs = new String[]{getString(R.string.pdf_mime_type), "%/%" + newText + "%"};
-                        cursor = getActivity().getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
-                        messageHandler.sendEmptyMessage(0);
-                    }
-                }.start();
-
-                adapter.changeCursor(cursor);
-                return true;
+                return false;
             }
         });
     }
 
     protected void openBook(String path) {
         Intent intent;
-        if (path.endsWith(".pdf")) {
+        if (path.endsWith(getString(R.string.pdf_extension))) {
             Uri uri = Uri.parse(path);
             intent = new Intent(getActivity(), PdfViewActivity.class);
             intent.setAction(Intent.ACTION_VIEW);
@@ -308,11 +282,9 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
         switch (requestCode) {
             case REQUEST_READ_EXTERNAL_STORAGE:
                 if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    setSearcViewVisiblity(true);
                     addView(recyclerView);
                     ((AppCompatActivity) getActivity()).getSupportLoaderManager().initLoader(FILES_LOADER, null, this);
                 } else {
-                    setSearcViewVisiblity(false);
                     if (!ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
                         emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, null, false);
                         ((TextView) emptyView.findViewById(R.id.empty_text)).setText(R.string.need_to_allow_access);
@@ -393,4 +365,5 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
         fragment.setArguments(arguments);
         return fragment;
     }
+
 }

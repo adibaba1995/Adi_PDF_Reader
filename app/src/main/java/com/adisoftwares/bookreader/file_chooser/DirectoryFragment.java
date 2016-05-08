@@ -47,6 +47,7 @@ import com.adisoftwares.bookreader.view.Scrollable;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
 
+//This class is used to display file chooser. This was actually an example on github. but i had to modify it a lot according to my needs. The main problem with that was it was impossible to integrate that library as a fragment.
 public class DirectoryFragment<S extends Scrollable> extends Fragment implements ObservableScrollViewCallbacks {
 
     private View fragmentView;

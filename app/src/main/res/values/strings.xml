@@ -157,10 +157,10 @@
     <string name="outline">Outline</string>
     <string name="bookmarks">Bookmarks</string>
     <string name="thumbnails">Thumbnails</string>
-    <string name="pdf_file_path">com.adisoftwares.bookreader.pdf.file_path</string>
-    <string name="pdf_core">com.adisoftwares.bookreader.pdf.core</string>
-    <string name="pdf_page_no">com.adisoftwares.bookreader.pdf.page_no</string>
-    <string name="files_content_uri_external">external</string>
+    <string name="pdf_file_path" translatable="false">com.adisoftwares.bookreader.pdf.file_path</string>
+    <string name="pdf_core" translatable="false">com.adisoftwares.bookreader.pdf.core</string>
+    <string name="pdf_page_no" translatable="false">com.adisoftwares.bookreader.pdf.page_no</string>
+    <string name="files_content_uri_external" translatable="false">external</string>
 
     <string name="seek_to_position">Seek to position</string>
     <string name="page_no">Page no</string>
@@ -174,5 +174,9 @@
     <string name="ip_address_content_desc">IP address</string>
     <string name="work_in_progress">Work in progress</string>
     <string name="need_to_allow_access">You need to allow access to storage</string>
+    <string name="preference_book_info" translatable="false">book_info</string>
+    <string name="preference_last_read_book_path" translatable="false">book_path</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="no_bookmarks">There are no bookmarks added</string>
 
 </resources>

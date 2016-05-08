@@ -11,7 +11,6 @@ import java.io.File;
 
 import uk.co.senab.bitmapcache.BitmapLruCache;
 import uk.co.senab.bitmapcache.CacheableBitmapDrawable;
-//import android.support.v4.util.LruCache;
 
 /**
  * Created by adityathanekar on 28/02/16.

@@ -2,6 +2,7 @@ package com.adisoftwares.bookreader;
 
 import android.app.Fragment;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.adisoftwares.bookreader.BookFragment;
 import com.adisoftwares.bookreader.database.BookContract;
@@ -58,6 +60,14 @@ public class RecentsFragment extends BookFragment {
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         filesCursor = data;
-        adapter.swapCursor(data);
+        if (data.getCount() == 0) {
+            emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, null, false);
+            ((TextView) emptyView.findViewById(R.id.empty_text)).setText(R.string.no_files_available);
+            ((TextView) emptyView.findViewById(R.id.empty_text)).setTextColor(Color.WHITE);
+            addView(emptyView);
+        } else {
+            addView(recyclerView);
+            adapter.swapCursor(data);
+        }
     }
 }

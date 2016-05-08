@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.adisoftwares.bookreader.BookFragment;
 import com.adisoftwares.bookreader.BookReaderApplication;
@@ -33,6 +35,7 @@ import butterknife.Unbinder;
 /**
  * Created by adityathanekar on 06/05/16.
  */
+//This class displays the bookmarks of a particular book.
 public class BookmarkFragment extends Fragment implements ThumbnailAdapter.OnRecyclerViewItemSelected, LoaderManager.LoaderCallbacks<Cursor>, BookmarkAdapter.OnRecyclerViewItemSelected {
 
     private OutlineItemSelected outlineItemSelected;
@@ -41,12 +44,16 @@ public class BookmarkFragment extends Fragment implements ThumbnailAdapter.OnRec
 
     @BindView(R.id.thumbnail_recycler_view)
     AutofitRecyclerView thumbnailRecyclerView;
+    @BindView(R.id.fragment_container)
+    FrameLayout thumbnailRecyclerViewContainer;
 
     private MuPDFCore mCore;
     private Unbinder unbinder;
 
     private ArrayList<Integer> bookmarkList;
     BookmarkAdapter adapter;
+
+    private View emptyView;
 
     @Nullable
     @Override
@@ -107,7 +114,14 @@ public class BookmarkFragment extends Fragment implements ThumbnailAdapter.OnRec
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        adapter.swapCursor(data);
+        if(data.getCount() == 0) {
+            emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, null, false);
+            ((TextView) emptyView.findViewById(R.id.empty_text)).setText(R.string.no_bookmarks);
+            thumbnailRecyclerViewContainer.addView(emptyView);
+        }
+        else {
+            adapter.swapCursor(data);
+        }
     }
 
     @Override

@@ -38,7 +38,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.adisoftwares.bookreader.Preference;
 import com.adisoftwares.bookreader.R;
 import com.adisoftwares.bookreader.Utility;
 import com.adisoftwares.bookreader.database.BookContract;
@@ -49,7 +48,6 @@ import com.artifex.mupdfdemo.Hit;
 import com.artifex.mupdfdemo.MuPDFAlert;
 import com.artifex.mupdfdemo.MuPDFCore;
 import com.artifex.mupdfdemo.MuPDFPageAdapter;
-import com.artifex.mupdfdemo.MuPDFPageView;
 import com.artifex.mupdfdemo.MuPDFReaderView;
 import com.artifex.mupdfdemo.MuPDFReflowAdapter;
 import com.artifex.mupdfdemo.MuPDFView;
@@ -524,6 +522,7 @@ public class PdfViewActivity extends AppCompatActivity implements FilePicker.Fil
         return super.onOptionsItemSelected(item);
     }
 
+    //This method is used to check if the page is bookmarked or not
     private boolean checkBookmarked() {
         ContentResolver resolver = getContentResolver();
         String projection[] = {BookContract.BookmarkEntry.COLUMN_PATH, BookContract.BookmarkEntry.COLUMN_PAGE_NO};
@@ -538,6 +537,7 @@ public class PdfViewActivity extends AppCompatActivity implements FilePicker.Fil
             return false;
     }
 
+    //This method is used to add bookmark
     private void addBookmark() {
         ContentResolver resolver = getContentResolver();
         ContentValues values = new ContentValues();
@@ -573,6 +573,7 @@ public class PdfViewActivity extends AppCompatActivity implements FilePicker.Fil
         }
     }
 
+    //This method is used to remove the bookmark
     private void removeBookmark() {
         ContentResolver resolver = getContentResolver();
         String where = BookContract.BookmarkEntry.COLUMN_PATH + " = ? AND " + BookContract.BookmarkEntry.COLUMN_PAGE_NO + " = ?";
@@ -811,8 +812,8 @@ public class PdfViewActivity extends AppCompatActivity implements FilePicker.Fil
     protected void onPause() {
         super.onPause();
 
-        SharedPreferences preferences = getSharedPreferences(Preference.PREFERENCE_NAME, Context.MODE_PRIVATE);
-        preferences.edit().putString(Preference.LAST_READ_BOOK_PATH, path).commit();
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.preference_book_info), Context.MODE_PRIVATE);
+        preferences.edit().putString(getString(R.string.preference_last_read_book_path), path).commit();
 
         addRecent();
 

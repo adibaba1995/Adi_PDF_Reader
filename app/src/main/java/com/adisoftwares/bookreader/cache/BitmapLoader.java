@@ -27,6 +27,7 @@ import uk.co.senab.bitmapcache.CacheableBitmapDrawable;
 /**
  * Created by adityathanekar on 28/02/16.
  */
+//This Class is used to load bitmap asynchronously
 public abstract class BitmapLoader {
 
     protected BitmapLruCache mCache;
