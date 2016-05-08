@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
+import com.adisoftwares.bookreader.BookReaderApplication;
+import com.adisoftwares.bookreader.R;
+
 /**
  * Created by adityathanekar on 19/03/16.
  */
@@ -20,10 +23,6 @@ public class BookContentProvider extends ContentProvider {
     static final int RECENTS = 101;
 
     private static final SQLiteQueryBuilder sBookmarksByBookNameQueryBuilder;
-
-    private static final String sBookWithId =
-            BookContract.BookmarkEntry.TABLE_NAME +
-                    "." + BookContract.BookmarkEntry._ID + " = ? ";
 
     static {
         sBookmarksByBookNameQueryBuilder = new SQLiteQueryBuilder();
@@ -66,7 +65,7 @@ public class BookContentProvider extends ContentProvider {
                 );
                 break;
             default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+                throw new UnsupportedOperationException(BookReaderApplication.getContext().getString(R.string.unknown_uri) + uri);
         }
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
@@ -84,7 +83,7 @@ public class BookContentProvider extends ContentProvider {
             case RECENTS:
                 return BookContract.RecentsEntry.CONTENT_TYPE;
             default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+                throw new UnsupportedOperationException(BookReaderApplication.getContext().getString(R.string.unknown_uri) + uri);
         }
     }
 
@@ -100,17 +99,17 @@ public class BookContentProvider extends ContentProvider {
                 if (_id > 0)
                     returnUri = BookContract.BookmarkEntry.buildBookUri(_id);
                 else
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                    throw new android.database.SQLException(BookReaderApplication.getContext().getString(R.string.failed_to_insert_row) + uri);
                 break;
             case RECENTS:
                 _id = db.insert(BookContract.RecentsEntry.TABLE_NAME, null, values);
                 if (_id > 0)
                     returnUri = BookContract.RecentsEntry.buildBookUri(_id);
                 else
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                    throw new android.database.SQLException(BookReaderApplication.getContext().getString(R.string.failed_to_insert_row) + uri);
                 break;
             default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+                throw new UnsupportedOperationException(BookReaderApplication.getContext().getString(R.string.unknown_uri) + uri);
         }
         //Note: we should not return uri instead we should use passed in uri because otherwise it will not correctly notify cursors of the change.
         getContext().getContentResolver().notifyChange(uri, null);
@@ -134,16 +133,16 @@ public class BookContentProvider extends ContentProvider {
                 noOfRowsDeleted = db.delete(BookContract.RecentsEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+                throw new UnsupportedOperationException(BookReaderApplication.getContext().getString(R.string.unknown_uri) + uri);
         }
-        // Student: A null value deletes all rows.  In my implementation of this, I only notified
+        // A null value deletes all rows.  In my implementation of this, I only notified
         // the uri listeners (using the content resolver) if the rowsDeleted != 0 or the selection
         // is null.
         // Oh, and you should notify the listeners here.
         if (noOfRowsDeleted != 0)
             getContext().getContentResolver().notifyChange(uri, null);
         db.close();
-        // Student: return the actual rows deleted
+        // return the actual rows deleted
         return noOfRowsDeleted;
     }
 

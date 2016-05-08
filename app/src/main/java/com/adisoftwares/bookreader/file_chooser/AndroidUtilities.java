@@ -40,11 +40,9 @@ public class AndroidUtilities {
 					} else {
 						display.getSize(displaySize);
 					}
-					Log.e("tmessages", "display size = " + displaySize.x+ " " + displaySize.y);
 				}
 			}
 		} catch (Exception e) {
-			Log.e("tmessages", e.toString());
 		}
 	}
 

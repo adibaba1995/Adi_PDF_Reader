@@ -5,15 +5,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
-import android.net.Uri;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.adisoftwares.bookreader.BookData;
 import com.adisoftwares.bookreader.BookReaderApplication;
-import com.adisoftwares.bookreader.LoadBookImage;
+import com.adisoftwares.bookreader.cache.LoadBookImage;
 import com.adisoftwares.bookreader.R;
 import com.adisoftwares.bookreader.Utility;
 import com.adisoftwares.bookreader.database.BookContract;
@@ -21,7 +18,6 @@ import com.adisoftwares.bookreader.pdf.PDFBookData;
 import com.adisoftwares.bookreader.pdf.PdfViewActivity;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by adityathanekar on 05/05/16.

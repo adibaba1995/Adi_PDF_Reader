@@ -36,6 +36,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.adisoftwares.bookreader.BookReaderApplication;
 import com.adisoftwares.bookreader.NavigationViewActivity;
 import com.adisoftwares.bookreader.R;
 import com.adisoftwares.bookreader.pdf.PdfViewActivity;
@@ -136,12 +137,6 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
         return getActivity().findViewById(android.R.id.content).getHeight();
     }
 
-    private class HistoryEntry implements Serializable {
-        int scrollItem, scrollOffset;
-        File dir;
-        String title;
-    }
-
     public boolean onBackPressed_() {
         if (history.size() > 0) {
             HistoryEntry he = history.remove(history.size() - 1);
@@ -173,7 +168,6 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
                 getActivity().unregisterReceiver(receiver);
             }
         } catch (Exception e) {
-            Log.e("tmessages", e.toString());
         }
     }
 
@@ -189,7 +183,6 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
                             listFiles(currentDir);
                         }
                     } catch (Exception e) {
-                        Log.e("tmessages", e.toString());
                     }
                 }
             };
@@ -205,15 +198,6 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
         ObservableListView listView = (ObservableListView) fragmentView.findViewById(R.id.scrollable);
 
         return listView;
-    }
-
-    private class ListItem implements Serializable {
-        int icon;
-        String title;
-        String subtitle = "";
-        String ext = "";
-        String thumb;
-        File file;
     }
 
     @Override
@@ -249,6 +233,8 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
             toolbar = (Toolbar) fragmentView.findViewById(R.id.toolbar);
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
             toolbar.setTitle(R.string.app_name);
+            if(title_ != null)
+                toolbar.setSubtitle(title_);
             ((NavigationViewActivity) getActivity()).enableNavigationDrawer(true, toolbar);
 
             listAdapter = new ListAdapter(getActivity());
@@ -304,12 +290,12 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
                         listView.setSelection(0);
                     } else {
                         if (!file.canRead()) {
-                            showErrorBox("AccessError");
+                            showErrorBox(getString(R.string.access_error));
                             return;
                         }
                         if (sizeLimit != 0) {
                             if (file.length() > sizeLimit) {
-                                showErrorBox("FileUploadLimit");
+                                showErrorBox(getString(R.string.file_limit));
                                 return;
                             }
                         }
@@ -320,7 +306,7 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
                             if (file.toString().contains(chhosefileType[j])) {
                                 String fileName = file.getAbsolutePath();
                                 Intent intent;
-                                if (fileName.endsWith(".pdf")) {
+                                if (fileName.endsWith(getString(R.string.pdf_extension))) {
                                     Uri uri = Uri.parse(fileName);
                                     intent = new Intent(getActivity(), PdfViewActivity.class);
                                     intent.setAction(Intent.ACTION_VIEW);
@@ -346,7 +332,7 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
 //                            }
 //                        }
                         if (!flag) {
-                            showErrorBox("Choose correct file.");
+                            showErrorBox(getString(R.string.choose_correct_file));
                             return;
                         }
 
@@ -381,9 +367,9 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
         ListItem ext = new ListItem();
         if (Build.VERSION.SDK_INT < 9
                 || Environment.isExternalStorageRemovable()) {
-            ext.title = "SdCard";
+            ext.title = getString(R.string.sd_card);
         } else {
-            ext.title = "InternalStorage";
+            ext.title = getString(R.string.internal_storage);
         }
         ext.icon = Build.VERSION.SDK_INT < 9
                 || Environment.isExternalStorageRemovable() ? R.drawable.ic_external_storage
@@ -392,17 +378,16 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
         ext.file = Environment.getExternalStorageDirectory();
         items.add(ext);
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(
-                    "/proc/mounts"));
+            BufferedReader reader = new BufferedReader(new FileReader(getString(R.string.mounts_path)));
             String line;
             HashMap<String, ArrayList<String>> aliases = new HashMap<String, ArrayList<String>>();
             ArrayList<String> result = new ArrayList<String>();
             String extDevice = null;
             while ((line = reader.readLine()) != null) {
-                if ((!line.contains("/mnt") && !line.contains("/storage") && !line
-                        .contains("/sdcard"))
-                        || line.contains("asec")
-                        || line.contains("tmpfs") || line.contains("none")) {
+                if ((!line.contains(getString(R.string.mnt_path)) && !line.contains(getString(R.string.storage_path)) && !line
+                        .contains(getString(R.string.sdcard_path)))
+                        || line.contains(getString(R.string.asec))
+                        || line.contains(getString(R.string.tmpfs)) || line.contains(getString(R.string.none))) {
                     continue;
                 }
                 String[] info = line.split(" ");
@@ -421,26 +406,24 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
                 for (String path : result) {
                     try {
                         ListItem item = new ListItem();
-                        if (path.toLowerCase().contains("sd")) {
-                            ext.title = "SdCard";
+                        if (path.toLowerCase().contains(getString(R.string.sd))) {
+                            ext.title = getString(R.string.sdcard_title);
                         } else {
-                            ext.title = "ExternalStorage";
+                            ext.title = getString(R.string.external_title);
                         }
                         item.icon = R.drawable.ic_external_storage;
                         item.subtitle = getRootSubtitle(path);
                         item.file = new File(path);
                         items.add(item);
                     } catch (Exception e) {
-                        Log.e("tmessages", e.toString());
                     }
                 }
             }
         } catch (Exception e) {
-            Log.e("tmessages", e.toString());
         }
         ListItem fs = new ListItem();
-        fs.title = "/";
-        fs.subtitle = "SystemRoot";
+        fs.title = getString(R.string.fs_title);
+        fs.subtitle = getString(R.string.fs_subtitle);
         fs.icon = R.drawable.folder;
         fs.file = new File("/");
         items.add(fs);
@@ -469,8 +452,8 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
         if (!dir.canRead()) {
             if (dir.getAbsolutePath().startsWith(
                     Environment.getExternalStorageDirectory().toString())
-                    || dir.getAbsolutePath().startsWith("/sdcard")
-                    || dir.getAbsolutePath().startsWith("/mnt/sdcard")) {
+                    || dir.getAbsolutePath().startsWith(getString(R.string.sdcard_path))
+                    || dir.getAbsolutePath().startsWith(getString(R.string.mnt_path))) {
                 if (!Environment.getExternalStorageState().equals(
                         Environment.MEDIA_MOUNTED)
                         && !Environment.getExternalStorageState().equals(
@@ -479,9 +462,9 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
                     items.clear();
                     String state = Environment.getExternalStorageState();
                     if (Environment.MEDIA_SHARED.equals(state)) {
-                        emptyView.setText("UsbActive");
+                        emptyView.setText(R.string.usb_active);
                     } else {
-                        emptyView.setText("NotMounted");
+                        emptyView.setText(R.string.not_mounted);
                     }
                     clearDrawableAnimation(listView);
                     // scrolling = true;
@@ -489,10 +472,10 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
                     return true;
                 }
             }
-            showErrorBox("AccessError");
+            showErrorBox(getString(R.string.access_error));
             return false;
         }
-        emptyView.setText("NoFiles");
+        emptyView.setText(R.string.no_files);
         File[] files = null;
         try {
             files = dir.listFiles();
@@ -501,7 +484,7 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
             return false;
         }
         if (files == null) {
-            showErrorBox("UnknownError");
+            showErrorBox(getString(R.string.unknown_error));
             return false;
         }
         currentDir = dir;
@@ -531,23 +514,23 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
             item.file = file;
             if (file.isDirectory()) {
                 item.icon = R.drawable.folder;
-                item.subtitle = "Folder";
+                item.subtitle = getString(R.string.folder_subtitle);
             } else {
                 String fname = file.getName();
                 String[] sp = fname.split("\\.");
                 item.ext = sp.length > 1 ? sp[sp.length - 1] : "?";
                 item.subtitle = formatFileSize(file.length());
                 fname = fname.toLowerCase();
-                if (fname.endsWith(".jpg") || fname.endsWith(".png")
-                        || fname.endsWith(".gif") || fname.endsWith(".jpeg")) {
+                if (fname.endsWith(getString(R.string.jpg_extension)) || fname.endsWith(getString(R.string.extension_png))
+                        || fname.endsWith(getString(R.string.gif_extension)) || fname.endsWith(getString(R.string.extension_jpeg))) {
                     item.thumb = file.getAbsolutePath();
                 }
             }
             items.add(item);
         }
         ListItem item = new ListItem();
-        item.title = "..";
-        item.subtitle = "Folder";
+        item.title = getString(R.string.go_back_title);
+        item.subtitle = getString(R.string.subtitle_folder);
         item.icon = R.drawable.folder;
         item.file = null;
         items.add(0, item);
@@ -559,13 +542,13 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
 
     public static String formatFileSize(long size) {
         if (size < 1024) {
-            return String.format("%d B", size);
+            return String.format(BookReaderApplication.getContext().getString(R.string.bytes), size);
         } else if (size < 1024 * 1024) {
-            return String.format("%.1f KB", size / 1024.0f);
+            return String.format(BookReaderApplication.getContext().getString(R.string.kb), size / 1024.0f);
         } else if (size < 1024 * 1024 * 1024) {
-            return String.format("%.1f MB", size / 1024.0f / 1024.0f);
+            return String.format(BookReaderApplication.getContext().getString(R.string.mb), size / 1024.0f / 1024.0f);
         } else {
-            return String.format("%.1f GB", size / 1024.0f / 1024.0f / 1024.0f);
+            return String.format(BookReaderApplication.getContext().getString(R.string.gb), size / 1024.0f / 1024.0f / 1024.0f);
         }
     }
 
@@ -594,7 +577,7 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
         }
         new AlertDialog.Builder(getActivity())
                 .setTitle(getActivity().getString(R.string.app_name))
-                .setMessage(error).setPositiveButton("OK", null).show();
+                .setMessage(error).setPositiveButton(R.string.positive_button, null).show();
     }
 
     private String getRootSubtitle(String path) {
@@ -605,7 +588,7 @@ public class DirectoryFragment<S extends Scrollable> extends Fragment implements
         if (total == 0) {
             return "";
         }
-        return "Free " + formatFileSize(free) + " of " + formatFileSize(total);
+        return getString(R.string.free_formatfilesize_of, formatFileSize(free), formatFileSize(total));
     }
 
     private class ListAdapter extends BaseFragmentAdapter {

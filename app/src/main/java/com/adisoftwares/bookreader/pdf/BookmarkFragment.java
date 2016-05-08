@@ -17,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.adisoftwares.bookreader.BookFragment;
+import com.adisoftwares.bookreader.BookReaderApplication;
 import com.adisoftwares.bookreader.R;
 import com.adisoftwares.bookreader.database.BookContract;
 import com.adisoftwares.bookreader.view.AutofitRecyclerView;
@@ -35,9 +37,6 @@ public class BookmarkFragment extends Fragment implements ThumbnailAdapter.OnRec
 
     private OutlineItemSelected outlineItemSelected;
 
-    public static final String FILE_PATH = "com.adisoftwares.bookreader.pdf.file_path";
-    public static final String CORE_OBJECT = "com.adisoftwares.bookreader.pdf.core";
-
     public static final int BOOKMARKS_LOADER = 1;
 
     @BindView(R.id.thumbnail_recycler_view)
@@ -54,13 +53,13 @@ public class BookmarkFragment extends Fragment implements ThumbnailAdapter.OnRec
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.thumbnail_fragment, container, false);
 
-        mCore = (MuPDFCore)getArguments().getSerializable(CORE_OBJECT);
+        mCore = (MuPDFCore)getArguments().getSerializable(getString(R.string.pdf_core));
 
         unbinder = ButterKnife.bind(this, rootView);
 
         bookmarkList = new ArrayList<>();
 
-        adapter = new BookmarkAdapter(mCore, getActivity(), getArguments().getString(FILE_PATH), bookmarkList);
+        adapter = new BookmarkAdapter(mCore, getActivity(), getArguments().getString(getString(R.string.pdf_file_path)), null);
         adapter.setRecyclerViewCallbacks(this);
 
         thumbnailRecyclerView.setAdapter(adapter);
@@ -73,11 +72,13 @@ public class BookmarkFragment extends Fragment implements ThumbnailAdapter.OnRec
         this.outlineItemSelected = outlineItemSelected;
     }
 
-    public void setData(MuPDFCore muPDFCore, String path) {
+    public static BookmarkFragment newInstance(MuPDFCore muPDFCore, String path) {
+        BookmarkFragment fragment = new BookmarkFragment();
         Bundle args = new Bundle();
-        args.putSerializable(CORE_OBJECT, muPDFCore);
-        args.putString(FILE_PATH, path);
-        setArguments(args);
+        args.putSerializable(BookReaderApplication.getContext().getString(R.string.pdf_core), muPDFCore);
+        args.putString(BookReaderApplication.getContext().getString(R.string.pdf_file_path), path);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -98,7 +99,7 @@ public class BookmarkFragment extends Fragment implements ThumbnailAdapter.OnRec
         String[] projection = null;
         String sortOrder = BookContract.BookmarkEntry.COLUMN_PAGE_NO + " ASC";
         String selection = BookContract.BookmarkEntry.COLUMN_PATH + " = ?";
-        String[] selectionArgs = new String[]{getArguments().getString(FILE_PATH)};
+        String[] selectionArgs = new String[]{getArguments().getString(getString(R.string.pdf_file_path))};
 
         CursorLoader cursorLoader = new CursorLoader(getActivity(), uri, projection, selection, selectionArgs, sortOrder);
         return cursorLoader;
@@ -106,17 +107,7 @@ public class BookmarkFragment extends Fragment implements ThumbnailAdapter.OnRec
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (bookmarkList != null)
-            bookmarkList.clear();
-        if(data.isBeforeFirst())
-            while (data.moveToNext()) {
-                Log.d("Aditya", String.valueOf(data.getInt(data.getColumnIndex(BookContract.BookmarkEntry.COLUMN_PAGE_NO))));
-                bookmarkList.add(data.getInt(data.getColumnIndex(BookContract.BookmarkEntry.COLUMN_PAGE_NO)));
-            }
-        adapter.notifyDataSetChanged();
-
-//        bookLoaderTask = new BookLoaderTask();
-//        bookLoaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, data);
+        adapter.swapCursor(data);
     }
 
     @Override

@@ -6,7 +6,7 @@
         android:id="@+id/accept"
         android:title="Accept"
         app:showAsAction="always"
-        android:icon="@drawable/right"/>
+        android:icon="@drawable/right" />
 
     <item android:id="@+id/action_share"
         android:title="@string/share"

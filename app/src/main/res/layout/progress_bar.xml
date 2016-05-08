@@ -4,4 +4,5 @@
     android:layout_gravity="center"
     android:clipToPadding="false"
     android:indeterminateOnly="true"
-    style="?android:attr/progressBarStyleSmall"/>
+    style="?android:attr/progressBarStyleSmall"
+    android:contentDescription="@string/work_in_progress"/>

@@ -14,7 +14,8 @@
         android:id="@+id/thumbnail"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/thumbnails"/>
 
     <TableLayout
         android:layout_width="0dp"
@@ -35,7 +36,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textColor="@android:color/white"
-                android:maxLines="1"/>
+                android:maxLines="1"
+                android:contentDescription="@string/file_name"/>
 
         </TableRow>
     </TableLayout>

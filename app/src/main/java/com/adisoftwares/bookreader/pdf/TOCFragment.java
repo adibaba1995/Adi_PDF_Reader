@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.adisoftwares.bookreader.BookReaderApplication;
 import com.adisoftwares.bookreader.OnItemClickListener;
 import com.adisoftwares.bookreader.R;
 import com.artifex.mupdfdemo.MuPDFCore;
@@ -28,8 +29,6 @@ import butterknife.Unbinder;
  * Created by adityathanekar on 27/02/16.
  */
 public class TOCFragment extends Fragment implements ThumbnailAdapter.OnRecyclerViewItemSelected {
-    public static final String CORE_OBJECT = "com.adisoftwares.bookreader.pdf.core";
-    private static final String TAG_TASK_FRAGMENT = "task_fragment";
 
     OutlineItem mItems[];
 
@@ -75,7 +74,7 @@ public class TOCFragment extends Fragment implements ThumbnailAdapter.OnRecycler
 
     public static TOCFragment newInstance(MuPDFCore core) {
         Bundle args = new Bundle();
-        args.putSerializable(CORE_OBJECT, core);
+        args.putSerializable(BookReaderApplication.getContext().getString(R.string.pdf_core), core);
         TOCFragment fragment = new TOCFragment();
         fragment.setArguments(args);
         return fragment;
@@ -90,7 +89,7 @@ public class TOCFragment extends Fragment implements ThumbnailAdapter.OnRecycler
 
         @Override
         protected Void doInBackground(Void... params) {
-            mItems = ((MuPDFCore)getArguments().getSerializable(CORE_OBJECT)).getOutline();
+            mItems = ((MuPDFCore)getArguments().getSerializable(getString(R.string.pdf_core))).getOutline();
             return null;
         }
 
@@ -99,7 +98,7 @@ public class TOCFragment extends Fragment implements ThumbnailAdapter.OnRecycler
             super.onPostExecute(aVoid);
             if(mItems != null) {
                 OutlineAdapter outlineAdapter = new OutlineAdapter(getActivity().getLayoutInflater(), mItems, getActivity());
-                outlineAdapter.setItemClickListener(new OnItemClickListener() {
+                outlineAdapter.setOutlineItemSelected(new OutlineAdapter.OutlineItemSelected() {
                     @Override
                     public void onItemClick(View view, int position) {
 //                        OutlineActivityData.get().position = outlineListView.getFirstVisiblePosition();

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.adisoftwares.bookreader.BookReaderApplication;
 import com.adisoftwares.bookreader.view.AutofitRecyclerView;
 import com.adisoftwares.bookreader.R;
 import com.artifex.mupdfdemo.MuPDFCore;
@@ -20,10 +21,6 @@ import butterknife.Unbinder;
  * Created by adityathanekar on 27/02/16.
  */
 public class ThumbnailFragment extends Fragment implements ThumbnailAdapter.OnRecyclerViewItemSelected {
-
-    public static final String CORE_OBJECT = "com.adisoftwares.bookreader.pdf.core";
-    public static final String FILE_PATH = "com.adisoftwares.bookreader.pdf.file_path";
-    public static final String PAGE_NO = "com.adisoftwares.bookreader.pdf.page_no";
 
     private OutlineItemSelected outlineItemSelected;
 
@@ -42,22 +39,24 @@ public class ThumbnailFragment extends Fragment implements ThumbnailAdapter.OnRe
 
         //thumbnailGridView.setAdapter(new ThumbnailAdapter((MuPDFCore)getArguments().getSerializable(CORE_OBJECT), getActivity(), getArguments().getString(FILE_PATH)));
 
-        mCore = (MuPDFCore)getArguments().getSerializable(CORE_OBJECT);
+        mCore = (MuPDFCore)getArguments().getSerializable(getString(R.string.pdf_core));
 
-        ThumbnailAdapter adapter = new ThumbnailAdapter(mCore, getActivity(), getArguments().getString(FILE_PATH));
+        ThumbnailAdapter adapter = new ThumbnailAdapter(mCore, getActivity(), getArguments().getString(getString(R.string.pdf_file_path)));
         adapter.setRecyclerViewCallbacks(this);
 
         thumbnailRecyclerView.setAdapter(adapter);
-        thumbnailRecyclerView.scrollToPosition(getArguments().getInt(PAGE_NO));
+        thumbnailRecyclerView.scrollToPosition(getArguments().getInt(getString(R.string.pdf_page_no)));
         return rootView;
     }
 
-    public void setData(MuPDFCore muPDFCore, String path, int pageNo) {
+    public static ThumbnailFragment newInstance(MuPDFCore muPDFCore, String path, int pageNo) {
+        ThumbnailFragment fragment = new ThumbnailFragment();
         Bundle args = new Bundle();
-        args.putSerializable(CORE_OBJECT, muPDFCore);
-        args.putString(FILE_PATH, path);
-        args.putSerializable(PAGE_NO, pageNo);
-        setArguments(args);
+        args.putSerializable(BookReaderApplication.getContext().getString(R.string.pdf_core), muPDFCore);
+        args.putString(BookReaderApplication.getContext().getString(R.string.pdf_file_path), path);
+        args.putSerializable(BookReaderApplication.getContext().getString(R.string.pdf_page_no), pageNo);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     public void setActivityCallbacks(OutlineItemSelected outlineItemSelected) {

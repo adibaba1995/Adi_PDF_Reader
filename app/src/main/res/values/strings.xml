@@ -3,6 +3,7 @@
     <string name="hello_world">Hello World</string>
 
     <string name="action_settings">Settings</string>
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
 
     <!-- Media Overlay Menu Text -->
     <string name="menu_mo_previous">Previous</string>
@@ -41,31 +42,26 @@
     <string name="search_hint">Enter book name</string>
     <string name="empty_string">You don\'t have pdf file.</string>
 
-    <!-- Wifi Fragment-->
+    <!-- Wifi Sharing-->
     <string name="enable_share">Enable file sharing</string>
     <string name="sharing_instruction">First connect to any network or wifi hotspot and then type above IP address on your browser in your PC or mobile.</string>
     <string name="disable_share">Disable file sharing</string>
     <string name="wifi_sharing">Wi-Fi sharing</string>
+    <string name="nanohttpd_replace_text_string" translatable="false">%FOLDERLIST%</string>
+    <string name="nanohttpd_html" translatable="false"><![CDATA[<div class=\'img\'><a href=\'%1$s\' target=\'_blank\'><img src=\'%2$s\' width=\'300\'\' height=\'200\'></a><div class=\'desc\'>%3$s</div></div>]]></string>
+    <string name="nanohttpd_file_query_parameter" translatable="false">file</string>
+    <string name="bitmap_mime_type" translatable="false">image/bmp</string>
+    <string name="wifi_sharing_share_button_state" translatable="false">com.adisoftwares.bookreader.wifi_sharing.share_button_state</string>
+    <string name="wifi_sharing_server" translatable="false">com.adisoftwares.bookreader.wifi_sharing.server</string>
+    <string name="wifi_sharing_ip" translatable="false">com.adisoftwares.bookreader.wifi_sharing.ip</string>
+    <string name="wifi_sharing_ip_address_view" translatable="false">http://%1$s:%2$s</string>
 
     <string name="drive">Google Drive</string>
     <string name="recents">Recently read</string>
     <string name="last_added">Last added</string>
     <string name="empty_toc">There are not any table of contents.</string>
-    <string name="downloading">Downloading</string>
-    <string name="play_services_required">Google Play Services required. After installing, close and relaunch this app.</string>
-    <string name="no_network_connection">No network connection available.</string>
-    <string name="account_permission_off">You have turned off the permissions for accessing the accounts.</string>
     <string name="edit">Edit</string>
     <string name="enter_word">Enter any word</string>
-
-    <!--Outline Activity-->
-    <string name="core_object" translatable="false">com.adisoftwares.bookreader.pdf.core</string>
-    <string name="file_path" translatable="false">com.adisoftwares.bookreader.pdf.file_path</string>
-    <string name="page_no" translatable="false">com.adisoftwares.bookreader.pdf.page_no</string>
-    <string name="page_no_selected" translatable="false">com.adisoftwares.bookreader.pdf.page_no</string>
-    <string name="outline">Outline</string>
-    <string name="bookmarks">Bookmarks</string>
-    <string name="thumbnails">Thumbnails</string>
 
     <!--PDF Activity-->
     <string name="filename" translatable="false">FileName</string>
@@ -74,7 +70,8 @@
     <string name="page" translatable="false">page</string>
     <string name="reflow_mode" translatable="false">ReflowMode</string>
     <string name="buttons_hidden" translatable="false">ButtonsHidden</string>
-    <string name="pdf_extension" translatable="false">PDF</string>
+    <string name="start_pdf" translatable="false">PDF</string>
+    <string name="pdf_extension" translatable="false">.pdf</string>
     <string name="file_content_uri" translatable="false">file://</string>
     <string name="pdf_mime_type" translatable="false">application/pdf</string>
     <string name="title" translatable="false">title</string>
@@ -85,10 +82,95 @@
     <string name="bookmark_remove">Bookmark removed</string>
     <string name="copying">Copying</string>
 
-    <string name="book_list">com.adisoftwares.bookreader.book_list</string>
-    <string name="book_title">com.adisoftwares.bookreader.title</string>
-    <string name="file_picker_title">com.adisoftwares.bookreader.title</string>
-    <string name="file_picker_list">com.adisoftwares.bookreader.files_list</string>
-    <string name="file_picker_history_entry">com.adisoftwares.bookreader.history_entry</string>
+    <!--BookFragment-->
+    <string name="book_title" translatable="false">com.adisoftwares.bookreader.title</string>
+    <string name="file_picker_title" translatable="false">com.adisoftwares.bookreader.title</string>
+
+    <!--Database-->
+    <string name="unknown_uri">Unknown uri: </string>
+    <string name="failed_to_insert_row">Failed to insert row into </string>
+    <string name="database_name" translatable="false">books.db</string>
+    <string name="create_bookmarks_table_query" translatable="false">CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, %3$s TEXT, %4$s TEXT, %5$s INTEGER, %6$s TEXT, %7$s TEXT)</string>
+    <string name="create_recents_table_query" translatable="false">CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, %3$s TEXT, %4$s TEXT, %5$s TEXT)</string>
+
+    <!--Google Drive-->
+    <string name="pref_account_name" translatable="false">accountName</string>
+    <string name="google_drive_file_id" translatable="false">com.adisoftwares.bookreader.file_id</string>
+    <string name="google_drive_file_name" translatable="false">com.adisoftwares.bookreader.file_name</string>
+    <string name="downloading">Downloading </string>
+    <string name="download_service_name" translatable="false">DownloadService</string>
+    <string name="play_services_required">Google Play Services required. After installing, close and relaunch this app.</string>
+    <string name="no_network_connection">No network connection available.</string>
+    <string name="account_permission_off">You have turned off the permissions for accessing the accounts.</string>
+    <string name="download_error">Some error occured</string>
+    <string name="download_success">Download completed</string>
+    <string name="try_again">Try again</string>
+    <string name="account_unspecified">Account unspecified</string>
+    <string name="drive_query" translatable="false">mimeType=\'application/pdf\'</string>
+    <string name="drive_spaces" translatable="false">drive</string>
+    <string name="drive_fields" translatable="false">nextPageToken, files(id, name)</string>
+    <string name="some_error">Some error occured</string>
+    <string name="request_cancelled">Request cancelled.</string>
+
+    <!--File picker-->
+    <string name="file_picker_list" translatable="false">com.adisoftwares.bookreader.files_list</string>
+    <string name="file_picker_history_entry" translatable="false">com.adisoftwares.bookreader.history_entry</string>
+    <string name="bitmap_cache_path" translatable="false">/Android-BitmapCache</string>
+    <string name="access_error">Access error</string>
+    <string name="file_limit">File upload limit</string>
+    <string name="choose_correct_file">Choose correct file.</string>
+    <string name="sd_card" translatable="false">SdCard</string>
+    <string name="internal_storage" translatable="false">InternalStorage</string>
+    <string name="mounts_path" translatable="false">/proc/mounts</string>
+    <string name="mnt_path" translatable="false">/mnt</string>
+    <string name="storage_path" translatable="false">/storage</string>
+    <string name="sdcard_path" translatable="false">/sdcard</string>
+    <string name="asec" translatable="false">asec</string>
+    <string name="tmpfs" translatable="false">tmpfs</string>
+    <string name="none" translatable="false">none</string>
+    <string name="sd" translatable="false">sd</string>
+    <string name="sdcard_title">SdCard</string>
+    <string name="external_title">ExternalStorage</string>
+    <string name="fs_title">/</string>
+    <string name="fs_subtitle">SystemRoot</string>
+    <string name="usb_active">UsbActive</string>
+    <string name="not_mounted">NotMounted</string>
+    <string name="no_files">NoFiles</string>
+    <string name="unknown_error">UnknownError</string>
+    <string name="folder_subtitle">Folder</string>
+    <string name="jpg_extension" translatable="false">.jpg</string>
+    <string name="gif_extension" translatable="false">.gif</string>
+    <string name="extension_jpeg" translatable="false">.jpeg</string>
+    <string name="extension_png" translatable="false">.png</string>
+    <string name="go_back_title" translatable="false">..</string>
+    <string name="subtitle_folder">Folder</string>
+    <string name="bytes" translatable="false">%d B</string>
+    <string name="kb" translatable="false">%.1f KB</string>
+    <string name="mb" translatable="false">%.1f MB</string>
+    <string name="gb" translatable="false">%.1f GB</string>
+    <string name="positive_button">OK</string>
+    <string name="free_formatfilesize_of">Free %1$s of %2$s</string>
+
+    <!--Outline Activity-->
+    <string name="page_no_selected" translatable="false">com.adisoftwares.bookreader.pdf.page_no</string>
+    <string name="outline">Outline</string>
+    <string name="bookmarks">Bookmarks</string>
+    <string name="thumbnails">Thumbnails</string>
+    <string name="pdf_file_path">com.adisoftwares.bookreader.pdf.file_path</string>
+    <string name="pdf_core">com.adisoftwares.bookreader.pdf.core</string>
+    <string name="pdf_page_no">com.adisoftwares.bookreader.pdf.page_no</string>
+    <string name="files_content_uri_external">external</string>
+
+    <string name="seek_to_position">Seek to position</string>
+    <string name="page_no">Page no</string>
+    <string name="error_occured">Error occured</string>
+    <string name="do_some_action">Do some action</string>
+    <string name="list_of_books">List of books</string>
+    <string name="open_last_read">Open last read</string>
+    <string name="file_name">File name</string>
+    <string name="folders_unavailable">There are no folders or files available</string>
+    <string name="empty">Empty</string>
+    <string name="ip_address_content_desc">IP address</string>
+    <string name="work_in_progress">Work in progress</string>
 
 </resources>

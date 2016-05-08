@@ -1,6 +1,8 @@
 package com.adisoftwares.bookreader;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.adisoftwares.bookreader.cache.LoadBookImage;
+import com.adisoftwares.bookreader.pdf.PDFBookData;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,14 +23,14 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BooksViewHol
 
     private LayoutInflater inflater;
 
-    private ArrayList<BookData> booksList;
+    Cursor data;
 
-    private OnItemClickListener mItemClickListener;
+    protected OnItemClickListener mItemClickListener;
 
     Context context;
 
-    public BooksAdapter(Context context, ArrayList<BookData> booksList) {
-        this.booksList = booksList;
+    public BooksAdapter(Context context, Cursor data) {
+        this.data = data;
         this.context = context;
         inflater = LayoutInflater.from(context);
         setHasStableIds(true);
@@ -35,7 +38,8 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BooksViewHol
 
     @Override
     public long getItemId(int position) {
-        return booksList.get(position).getId();
+        data.moveToPosition(position);
+        return data.getInt(data.getColumnIndex(MediaStore.Files.FileColumns._ID));
     }
 
     @Override
@@ -48,24 +52,38 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BooksViewHol
 
     @Override
     public void onBindViewHolder(final BooksViewHolder holder, int position) {
-        final BookData bookData = booksList.get(position);
-        holder.title.setText(Utility.getFileNameFromUrl(bookData.getPath()));
+        data.moveToPosition(position);
+        try {
+            final String path = data.getString(data.getColumnIndex(MediaStore.Files.FileColumns.DATA));
+            holder.title.setText(Utility.getFileNameFromUrl(path));
 
-        holder.thumbnail.post(new Runnable() {
-            @Override
-            public void run() {
-                LoadBookImage.get().loadBitmap(bookData.getPath(), holder.thumbnail, holder.thumbnail.getWidth(), holder.thumbnail.getHeight(), 0, bookData);
-            }
-        });
+            holder.thumbnail.post(new Runnable() {
+                @Override
+                public void run() {
+                    LoadBookImage.get().loadBitmap(path, holder.thumbnail, holder.thumbnail.getWidth(), holder.thumbnail.getHeight(), 0);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public int getItemCount() {
-        return booksList.size();
+        if (data == null)
+            return 0;
+        else if (!data.isClosed())
+            return data.getCount();
+        else return 0;
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mItemClickListener = mItemClickListener;
+    }
+
+    public void swapCursor(Cursor data) {
+        this.data = data;
+        notifyDataSetChanged();
     }
 
     class BooksViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -84,12 +102,15 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BooksViewHol
         @Override
         public void onClick(View v) {
             if (mItemClickListener != null) {
-                mItemClickListener.onItemClick(v, getAdapterPosition());
+                mItemClickListener.onItemClick(getAdapterPosition());
             }
         }
 
     }
 
-
-
+//    @Override
+//    public void onViewDetachedFromWindow(BooksViewHolder holder) {
+//        super.onViewDetachedFromWindow(holder);
+//        data.close();
+//    }
 }

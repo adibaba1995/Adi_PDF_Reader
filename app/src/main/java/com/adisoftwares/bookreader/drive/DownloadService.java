@@ -50,15 +50,10 @@ public class DownloadService extends IntentService {
 
     private static final String[] SCOPES = { DriveScopes.DRIVE_READONLY };
 
-    private static final int NOTIFICATION_ID = 0;
-
-    private static final String PREF_ACCOUNT_NAME = "accountName";
-    public static final String FILE_ID = "com.adisoftwares.bookreader.file_id";
-    public static final String FILE_NAME = "com.adisoftwares.bookreader.file_name";
-    final static String GROUP_KEY_DOWNLOADS = "group_key_downloads";
+    private static int notificationid = 0;
 
     public DownloadService() {
-        super("DownloadService");
+        super(BookReaderApplication.getContext().getString(R.string.download_service_name));
     }
 
     @Override
@@ -67,34 +62,36 @@ public class DownloadService extends IntentService {
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff())
-                .setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
+                .setSelectedAccountName(settings.getString(getApplicationContext().getString(R.string.pref_account_name), null));
         return super.onStartCommand(intent, flags, startId);
     }
 
     // will be called asynchronously by Android
     @Override
     protected void onHandleIntent(Intent intent) {
+        notificationid++;
         HttpTransport transport = AndroidHttp.newCompatibleTransport();
         JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
         mService = new com.google.api.services.drive.Drive.Builder(
                 transport, jsonFactory, mCredential)
-                .setApplicationName("Adi Book Reader")
+                .setApplicationName(getApplicationContext().getString(R.string.app_name))
                 .build();
 
         try {
-            publishResults("Downloading " + intent.getStringExtra(FILE_NAME), true);
-            OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/" + intent.getStringExtra(FILE_NAME)));
-            mService.files().get(intent.getStringExtra(FILE_ID)).executeMediaAndDownloadTo(outputStream);
-            String paths[] = {Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath() + "/" + intent.getStringExtra(FILE_NAME)};
-            String mimeTypes[] = {"application/pdf"};
+            publishResults(getApplicationContext().getString(R.string.downloading) + intent.getStringExtra(getApplicationContext().getString(R.string.google_drive_file_name)), true);
+            OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/" + intent.getStringExtra(getApplicationContext().getString(R.string.google_drive_file_name))));
+            mService.files().get(intent.getStringExtra(getApplicationContext().getString(R.string.google_drive_file_id))).executeMediaAndDownloadTo(outputStream);
+            String paths[] = {Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath() + "/" + intent.getStringExtra(getApplicationContext().getString(R.string.google_drive_file_name))};
+            String mimeTypes[] = {getApplicationContext().getString(R.string.pdf_mime_type)};
             MediaScannerConnection.scanFile(getApplicationContext(), paths, mimeTypes, null);
             outputStream.close();
         } catch (Exception e) {
-            Log.d("Aditya", e.toString());
-            publishResults("Some error occured", false);
+            publishResults(getString(R.string.download_error), false);
+            notificationid--;
             return;
         }
-        publishResults("Download completed", false);
+        publishResults(getString(R.string.download_success), false);
+        notificationid--;
 //        publishResults(output.getAbsolutePath(), result);
     }
 
@@ -103,10 +100,9 @@ public class DownloadService extends IntentService {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setContentTitle(getApplicationContext().getString(R.string.app_name))
                 .setSmallIcon(R.drawable.book)
-                .setGroup(GROUP_KEY_DOWNLOADS)
                 .setContentText(message);
         mBuilder.setProgress(0, 0, enableProgress);
         // Issues the notification
-        mNotifyManager.notify(NOTIFICATION_ID, mBuilder.build());
+        mNotifyManager.notify(notificationid, mBuilder.build());
     }
 }

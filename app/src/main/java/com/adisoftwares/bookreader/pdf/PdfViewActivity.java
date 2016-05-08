@@ -549,25 +549,27 @@ public class PdfViewActivity extends AppCompatActivity implements FilePicker.Fil
     }
 
     private void addRecent() {
-        ContentResolver resolver = getContentResolver();
-        String projection[] = {BookContract.RecentsEntry.COLUMN_PATH};
-        String selection = BookContract.RecentsEntry.COLUMN_PATH + " = ?";
-        String[] selectionArgs = new String[]{path};
-        //cursor = getActivity().getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
-        Cursor cursor = resolver.query(BookContract.RecentsEntry.CONTENT_URI, projection, selection, selectionArgs, null);
+        if (core != null) {
+            ContentResolver resolver = getContentResolver();
+            String projection[] = {BookContract.RecentsEntry.COLUMN_PATH};
+            String selection = BookContract.RecentsEntry.COLUMN_PATH + " = ?";
+            String[] selectionArgs = new String[]{path};
+            //cursor = getActivity().getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
+            Cursor cursor = resolver.query(BookContract.RecentsEntry.CONTENT_URI, projection, selection, selectionArgs, null);
 
-        if (!cursor.moveToFirst()) {
-            ContentValues values = new ContentValues();
-            values.put(BookContract.RecentsEntry.COLUMN_PATH, path);
-            values.put(BookContract.RecentsEntry.COLUMN_FILE_NAME, Utility.getFileNameFromUrl(path));
-            values.put(BookContract.RecentsEntry.COLUMN_ADD_TIME, Utility.getCurrentTime());
-            resolver.insert(BookContract.RecentsEntry.CONTENT_URI, values);
-        } else {
-            ContentValues values = new ContentValues();
-            values.put(BookContract.RecentsEntry.COLUMN_ADD_TIME, Utility.getCurrentTime());
-            String where = BookContract.RecentsEntry.COLUMN_PATH + " = ?";
-            String selectionArguments[] = {path};
-            resolver.update(BookContract.RecentsEntry.CONTENT_URI, values, where, selectionArguments);
+            if (!cursor.moveToFirst()) {
+                ContentValues values = new ContentValues();
+                values.put(BookContract.RecentsEntry.COLUMN_PATH, path);
+                values.put(BookContract.RecentsEntry.COLUMN_FILE_NAME, Utility.getFileNameFromUrl(path));
+                values.put(BookContract.RecentsEntry.COLUMN_ADD_TIME, Utility.getCurrentTime());
+                resolver.insert(BookContract.RecentsEntry.CONTENT_URI, values);
+            } else {
+                ContentValues values = new ContentValues();
+                values.put(BookContract.RecentsEntry.COLUMN_ADD_TIME, Utility.getCurrentTime());
+                String where = BookContract.RecentsEntry.COLUMN_PATH + " = ?";
+                String selectionArguments[] = {path};
+                resolver.update(BookContract.RecentsEntry.CONTENT_URI, values, where, selectionArguments);
+            }
         }
     }
 
@@ -709,9 +711,9 @@ public class PdfViewActivity extends AppCompatActivity implements FilePicker.Fil
         mOutlineButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(PdfViewActivity.this, OutlineActivity.class);
-                intent.putExtra(getString(R.string.core_object), core);
-                intent.putExtra(getString(R.string.file_path), path);
-                intent.putExtra(getString(R.string.page_no), mDocView.getDisplayedViewIndex());
+                intent.putExtra(getString(R.string.pdf_core), core);
+                intent.putExtra(getString(R.string.pdf_file_path), path);
+                intent.putExtra(getString(R.string.pdf_page_no), mDocView.getDisplayedViewIndex());
                 Bundle bndlanimation =
                         ActivityOptions.makeCustomAnimation(PdfViewActivity.this, R.anim.slide_in_bottom, R.anim.slide_out_top).toBundle();
                 startActivityForResult(intent, OUTLINE_REQUEST, bndlanimation);
@@ -840,7 +842,8 @@ public class PdfViewActivity extends AppCompatActivity implements FilePicker.Fil
             mAlertTask = null;
         }
         core = null;
-        unbinder.unbind();
+        if (unbinder != null)
+            unbinder.unbind();
         super.onDestroy();
     }
 
@@ -877,7 +880,7 @@ public class PdfViewActivity extends AppCompatActivity implements FilePicker.Fil
     }
 
     private void printDoc() {
-        if (!core.fileFormat().startsWith(getString(R.string.pdf_extension))) {
+        if (!core.fileFormat().startsWith(getString(R.string.start_pdf))) {
             showInfo(getString(R.string.format_currently_not_supported));
             return;
         }

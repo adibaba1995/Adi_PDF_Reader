@@ -7,4 +7,5 @@
     android:text="@string/empty_string"
     android:padding="16dp"
     android:textAppearance="?android:textAppearanceLarge"
-    android:gravity="center"/>
+    android:gravity="center"
+    android:contentDescription="@string/empty"/>

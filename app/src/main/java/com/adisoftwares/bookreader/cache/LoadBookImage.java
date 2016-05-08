@@ -1,13 +1,16 @@
-package com.adisoftwares.bookreader;
+package com.adisoftwares.bookreader.cache;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
 
-import com.adisoftwares.bookreader.cache.BitmapLoader;
-import com.adisoftwares.bookreader.cache.BitmapLruCache;
-import com.adisoftwares.bookreader.cache.CacheableBitmapDrawable;
+import com.adisoftwares.bookreader.BookData;
+import com.adisoftwares.bookreader.BookReaderApplication;
+import com.adisoftwares.bookreader.R;
 
 import java.io.File;
+
+import uk.co.senab.bitmapcache.BitmapLruCache;
+import uk.co.senab.bitmapcache.CacheableBitmapDrawable;
 //import android.support.v4.util.LruCache;
 
 /**
@@ -24,9 +27,9 @@ public class LoadBookImage extends BitmapLoader {
         // the cache dir
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             cacheLocation = new File(
-                    Environment.getExternalStorageDirectory() + "/Android-BitmapCache");
+                    Environment.getExternalStorageDirectory() + BookReaderApplication.getContext().getString(R.string.bitmap_cache_path));
         } else {
-            cacheLocation = new File(BookReaderApplication.getContext().getFilesDir() + "/Android-BitmapCache");
+            cacheLocation = new File(BookReaderApplication.getContext().getFilesDir() + BookReaderApplication.getContext().getString(R.string.bitmap_cache_path));
         }
         cacheLocation.mkdirs();
 

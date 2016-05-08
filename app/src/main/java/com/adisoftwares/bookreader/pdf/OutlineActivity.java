@@ -47,7 +47,7 @@ public class OutlineActivity extends AppCompatActivity implements OutlineItemSel
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(Utility.getFileNameFromUrl(getIntent().getStringExtra(getString(R.string.file_path))));
+        getSupportActionBar().setTitle(Utility.getFileNameFromUrl(getIntent().getStringExtra(getString(R.string.pdf_file_path))));
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -71,15 +71,13 @@ public class OutlineActivity extends AppCompatActivity implements OutlineItemSel
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
-        MuPDFCore muPDFCore = (MuPDFCore)getIntent().getSerializableExtra(getString(R.string.core_object));
-        ThumbnailFragment thumbnailFragment = new ThumbnailFragment();
-        thumbnailFragment.setData(muPDFCore, getIntent().getStringExtra(getString(R.string.file_path)), getIntent().getIntExtra(getString(R.string.page_no), 0));
+        MuPDFCore muPDFCore = (MuPDFCore)getIntent().getSerializableExtra(getString(R.string.pdf_core));
+        ThumbnailFragment thumbnailFragment = ThumbnailFragment.newInstance(muPDFCore, getIntent().getStringExtra(getString(R.string.pdf_file_path)), getIntent().getIntExtra(getString(R.string.pdf_page_no), 0));
         thumbnailFragment.setActivityCallbacks(this);
         TOCFragment tocFragment = TOCFragment.newInstance(muPDFCore);
         tocFragment.setActivityCallbacks(this);
-        BookmarkFragment bookmarkFragment = new BookmarkFragment();
+        BookmarkFragment bookmarkFragment = BookmarkFragment.newInstance(muPDFCore, getIntent().getStringExtra(getString(R.string.pdf_file_path)));
         bookmarkFragment.setActivityCallbacks(this);
-        bookmarkFragment.setData(muPDFCore, getIntent().getStringExtra(getString(R.string.file_path)));
         adapter.addFragment(tocFragment, getString(R.string.outline));
         adapter.addFragment(bookmarkFragment, getString(R.string.bookmarks));
         adapter.addFragment(thumbnailFragment, getString(R.string.thumbnails));

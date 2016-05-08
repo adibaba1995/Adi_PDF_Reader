@@ -38,19 +38,22 @@ android:background="@android:color/white">
             android:id="@+id/ip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/black"
+            android:contentDescription="@string/ip_address_content_desc"/>
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            app:srcCompat="@drawable/wifi_direct" />
+            app:srcCompat="@drawable/wifi_direct"
+            android:contentDescription="@string/wifi_sharing"/>
 
         <Button
             android:id="@+id/enable_share"
             android:layout_margin="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/enable_share" />
+            android:text="@string/enable_share"
+            android:contentDescription="@string/enable_share"/>
 
         <TextView
             android:layout_margin="16dp"
@@ -58,7 +61,8 @@ android:background="@android:color/white">
             android:layout_height="wrap_content"
             android:text="@string/sharing_instruction"
             android:gravity="center"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/black"
+            android:contentDescription="@string/sharing_instruction"/>
 
     </LinearLayout>
 

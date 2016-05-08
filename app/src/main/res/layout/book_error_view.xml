@@ -11,12 +11,14 @@
         android:text="@string/book_permission"
         android:layout_margin="16dp"
         android:textAppearance="?android:textAppearanceLarge"
-        android:textColor="@android:color/black"/>
+        android:textColor="@android:color/black"
+        android:contentDescription="@string/error_occured"/>
     
     <Button
         android:id="@+id/error_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/grant_permission"/>
+        android:text="@string/grant_permission"
+        android:contentDescription="@string/do_some_action"/>
 
 </LinearLayout>

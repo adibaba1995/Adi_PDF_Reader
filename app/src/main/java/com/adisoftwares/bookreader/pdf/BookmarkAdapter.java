@@ -2,6 +2,7 @@ package com.adisoftwares.bookreader.pdf;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import com.adisoftwares.bookreader.LoadThumbnailsOfPages;
 import com.adisoftwares.bookreader.R;
 import com.adisoftwares.bookreader.Utility;
+import com.adisoftwares.bookreader.database.BookContract;
 import com.androidquery.AQuery;
 import com.artifex.mupdfdemo.MuPDFCore;
 
@@ -38,8 +40,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
     MuPDFCore.Cookie cookie;
     private Context mContext;
     LoadThumbnailsOfPages thumbnailLoader;
-
-    private ArrayList<Integer> bookmarkList;
+    private Cursor data;
 
     public interface OnRecyclerViewItemSelected {
         public void onRecyclerViewItemSelected(int position);
@@ -49,7 +50,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
     private Bitmap mLoadingBitmap;
 
-    public BookmarkAdapter(MuPDFCore core, Context context, String path, ArrayList<Integer> bookmarkList) {
+    public BookmarkAdapter(MuPDFCore core, Context context, String path, Cursor data) {
         mCore = core;
         cookie = mCore.new Cookie();
         mContext = context;
@@ -57,16 +58,17 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         inflater = LayoutInflater.from(context);
         setHasStableIds(true);
         mLoadingBitmap = null;
-        this.bookmarkList = bookmarkList;
+        this.data = data;
     }
 
     @Override
     public long getItemId(int position) {
-        return position;
+        data.moveToPosition(position);
+        return data.getLong(data.getColumnIndex(BookContract.BookmarkEntry._ID));
     }
 
 
-        @Override
+    @Override
     public BookmarkViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.thumbnail, parent, false);
         BookmarkViewHolder holder = new BookmarkViewHolder(view);
@@ -76,7 +78,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
     @Override
     public void onBindViewHolder(final BookmarkViewHolder holder, int position) {
         AQuery aq = new AQuery(holder.itemView);
-        aq.id(R.id.page_no).text("" + (bookmarkList.get(position) + 1));
+        aq.id(R.id.page_no).text("" + (data.getInt(data.getColumnIndex(BookContract.BookmarkEntry.COLUMN_PAGE_NO)) + 1));
         //holder.thumbnail.setImageBitmap(thumbnailLoader.loadBitmap(position));
         drawPageImageView(aq.id(R.id.thumbnail).getImageView(), position);
         //holder.page_no.setText(position + "");
@@ -84,7 +86,11 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
     @Override
     public int getItemCount() {
-        return bookmarkList.size();
+        if (data == null)
+            return 0;
+        else if (!data.isClosed())
+            return data.getCount();
+        else return 0;
     }
 
     class BookmarkViewHolder extends RecyclerView.ViewHolder {
@@ -94,13 +100,15 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
         public BookmarkViewHolder(View itemView) {
             super(itemView);
-            thumbnail = (ImageView)itemView.findViewById(R.id.thumbnail);
-            page_no = (TextView)itemView.findViewById(R.id.page_no);
+            thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
+            page_no = (TextView) itemView.findViewById(R.id.page_no);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(onRecyclerViewItemSelected != null)
-                        onRecyclerViewItemSelected.onRecyclerViewItemSelected(bookmarkList.get(getAdapterPosition()));
+                    if (onRecyclerViewItemSelected != null) {
+                        data.moveToPosition(getAdapterPosition());
+                        onRecyclerViewItemSelected.onRecyclerViewItemSelected(data.getInt(data.getColumnIndex(BookContract.BookmarkEntry.COLUMN_PAGE_NO)));
+                    }
                 }
             });
         }
@@ -123,8 +131,8 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
     private void drawPageImageView(ImageView v, int position) {
         if (cancelPotentialWork(v, position)) {
-
-            final BitmapWorkerTask task = new BitmapWorkerTask(v, bookmarkList.get(position));
+            data.moveToPosition(position);
+            final BitmapWorkerTask task = new BitmapWorkerTask(v, data.getInt(data.getColumnIndex(BookContract.BookmarkEntry.COLUMN_PAGE_NO)));
             final AsyncDrawable asyncDrawable = new AsyncDrawable(mContext.getResources(), mLoadingBitmap, task);
             v.setImageDrawable(asyncDrawable);
             task.execute();
@@ -217,6 +225,11 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
     public void setRecyclerViewCallbacks(OnRecyclerViewItemSelected onRecyclerViewItemSelected) {
         this.onRecyclerViewItemSelected = onRecyclerViewItemSelected;
+    }
+
+    public void swapCursor(Cursor data) {
+        this.data = data;
+        notifyDataSetChanged();
     }
 
 }

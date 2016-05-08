@@ -22,8 +22,6 @@ import butterknife.ButterKnife;
  */
 public class OutlineAdapter extends RecyclerView.Adapter<OutlineAdapter.OutlineViewHolder> {
 
-    private OnItemClickListener itemClickListener;
-
     private OutlineItem mItems[];
     private final LayoutInflater mInflater;
     private Context context;
@@ -31,6 +29,16 @@ public class OutlineAdapter extends RecyclerView.Adapter<OutlineAdapter.OutlineV
         mInflater = inflater;
         mItems    = items;
         this.context = context;
+    }
+
+    public interface OutlineItemSelected {
+        public void onItemClick(View view, int position);
+    }
+
+    private OutlineItemSelected outlineItemSelected;
+
+    public void setOutlineItemSelected(OutlineItemSelected outlineItemSelected) {
+        this.outlineItemSelected = outlineItemSelected;
     }
 
     @Override
@@ -72,15 +80,11 @@ public class OutlineAdapter extends RecyclerView.Adapter<OutlineAdapter.OutlineV
 
         @Override
         public void onClick(View v) {
-            if(itemClickListener != null) {
+            if(outlineItemSelected != null) {
 //                OutlineActivityData.get().position = getAdapterPosition();
-                itemClickListener.onItemClick(v, mItems[getAdapterPosition()].page);
+                outlineItemSelected.onItemClick(v, mItems[getAdapterPosition()].page);
             }
         }
-    }
-
-    public void setItemClickListener(OnItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
     }
 
     public void setItems(OutlineItem[] items) {

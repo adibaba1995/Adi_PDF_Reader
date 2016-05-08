@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import com.adisoftwares.bookreader.drive.DriveFragment;
 import com.adisoftwares.bookreader.file_chooser.DirectoryFragment;
 import com.adisoftwares.bookreader.wifi_sharing.WifiFragment;
-import com.squareup.otto.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,7 +27,7 @@ import butterknife.Unbinder;
  */
 //This is the class for the activity which starts as soon as the app starts.
 //It contains the navigation drawer and the fragments are added or removed as needed.
-public class NavigationViewActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class NavigationViewActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BookFragment.SearchViewTextSubmitted {
 
     @BindView(R.id.navigationView)
     NavigationView navigationView;
@@ -50,7 +49,8 @@ public class NavigationViewActivity extends AppCompatActivity implements Navigat
         FragmentManager fm = getFragmentManager();
 
         if (savedInstanceState == null) {
-            Fragment fragment = new BookGridFragment();
+            BookFragment fragment = new BookFragment();
+            fragment.setSearchViewTextSubmittedListener(this);
             fm.beginTransaction().add(R.id.fragment_container, fragment).commit();
         }
     }
@@ -62,13 +62,11 @@ public class NavigationViewActivity extends AppCompatActivity implements Navigat
     @Override
     protected void onResume() {
         super.onResume();
-        BusStation.getBus().register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        BusStation.getBus().unregister(this);
     }
 
     @Override
@@ -82,14 +80,24 @@ public class NavigationViewActivity extends AppCompatActivity implements Navigat
         super.onPostCreate(savedInstanceState, persistentState);
     }
 
-    //This method is called when the user submits the search button text.
-    @Subscribe
-    public void searchViewTextSubmitted(String title) {
+////    This method is called when the user submits the search button text.
+//    @Subscribe
+//    public void searchViewTextSubmitted(String title) {
+//        FragmentManager fm = getFragmentManager();
+//        BookFragment fragment = BookFragment.setSearchData(title);
+//        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+//        fragmentTransaction.remove(getFragmentManager().findFragmentById(R.id.fragment_container)).add(R.id.fragment_container, fragment);
+////        fragmentTransaction.replace(R.id.fragment_container, fragment);
+//        fragmentTransaction.addToBackStack(null);
+//        fragmentTransaction.commit();
+//    }
+
+    @Override
+    public void submitText(String text) {
         FragmentManager fm = getFragmentManager();
-        Fragment fragment = SearchResultFragment.newInstance(title);
+        BookFragment fragment = BookFragment.setSearchData(text).setSearchViewTextSubmittedListener(this);
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.remove(getFragmentManager().findFragmentById(R.id.fragment_container)).add(R.id.fragment_container, fragment);
-//        fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
@@ -103,13 +111,13 @@ public class NavigationViewActivity extends AppCompatActivity implements Navigat
                 fragment = new DirectoryFragment();
                 break;
             case R.id.documents:
-                fragment = new BookGridFragment();
+                fragment = new BookFragment().setSearchViewTextSubmittedListener(this);;
                 break;
             case R.id.recents:
-                fragment = new RecentsFragment();
+                fragment = new RecentsFragment().setSearchViewTextSubmittedListener(this);
                 break;
             case R.id.last_added:
-                fragment = new LastAddedFragment();
+                fragment = new LastAddedFragment().setSearchViewTextSubmittedListener(this);
                 break;
             case R.id.wifi:
                 fragment = new WifiFragment();

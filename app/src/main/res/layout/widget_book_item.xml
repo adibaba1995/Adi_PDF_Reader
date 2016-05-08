@@ -13,7 +13,8 @@
         android:id="@+id/thumbnail"
         android:layout_width="100dp"
         android:layout_height="150dp"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/thumbnails"/>
 
     <TextView
         android:id="@+id/display_name"
@@ -26,6 +27,7 @@
         android:background="#000000"
         android:gravity="center"
         android:maxLines="1"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        android:contentDescription="@string/filename"/>
 
 </RelativeLayout>

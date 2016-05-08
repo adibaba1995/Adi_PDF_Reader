@@ -1,15 +1,28 @@
 package com.adisoftwares.bookreader.cache;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.graphics.drawable.VectorDrawableCompat;
+import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
 import com.adisoftwares.bookreader.BookData;
+import com.adisoftwares.bookreader.BookReaderApplication;
+import com.adisoftwares.bookreader.R;
+import com.adisoftwares.bookreader.Utility;
+import com.adisoftwares.bookreader.pdf.PDFBookData;
+import com.jakewharton.disklrucache.Util;
 
 import java.lang.ref.WeakReference;
+
+import uk.co.senab.bitmapcache.BitmapLruCache;
+import uk.co.senab.bitmapcache.CacheableBitmapDrawable;
 
 /**
  * Created by adityathanekar on 28/02/16.
@@ -22,20 +35,35 @@ public abstract class BitmapLoader {
         private String url;
         private final WeakReference<ImageView> imageViewReference;
         int width, height, position;
-        BookData bookData;
+        String filePath;
 
-        public BitmapLoaderTask(ImageView imageView, int width, int height, int position, BookData bookData) {
+        public BitmapLoaderTask(ImageView imageView, int width, int height, int position, String filePath) {
             imageViewReference = new WeakReference<ImageView>(imageView);
             this.width = width;
             this.height = height;
-            this.bookData = bookData;
             this.position = position;
+            this.filePath = filePath;
         }
 
         @Override
         // Actual download method, run in the task thread
         protected Bitmap doInBackground(String... params) {
-            return loadBitmap(width, height, bookData, position);
+            BookData bookData = null;
+            try {
+                bookData = new PDFBookData(filePath);
+                return loadBitmap(width, height, bookData, position);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            bitmap.eraseColor(Color.BLACK);
+
+
+            Canvas canvas = new Canvas(bitmap);
+            Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+            Bitmap errorIcon = Utility.getBitmapFromVector(VectorDrawableCompat.create(BookReaderApplication.getContext().getResources(), R.drawable.error, null));
+            canvas.drawBitmap(errorIcon, (bitmap.getWidth() / 2) - (errorIcon.getWidth() / 2), (bitmap.getHeight() / 2) - (errorIcon.getHeight() / 2), paint);
+            return bitmap;
         }
 
         @Override
@@ -75,7 +103,6 @@ public abstract class BitmapLoader {
         return bitmap;
     }
 
-
     static class DownloadedDrawable extends ColorDrawable {
         private final WeakReference<BitmapLoaderTask> bitmapDownloaderTaskReference;
 
@@ -90,9 +117,9 @@ public abstract class BitmapLoader {
         }
     }
 
-    public void loadBitmap(String filePath, ImageView imageView, int width, int height, int position, BookData data) {
+    public void loadBitmap(String filePath, ImageView imageView, int width, int height, int position) {
         if (cancelPotentialDownload(filePath, imageView)) {
-            BitmapLoaderTask task = new BitmapLoaderTask(imageView, width, height, position, data);
+            BitmapLoaderTask task = new BitmapLoaderTask(imageView, width, height, position, filePath);
             DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task);
             imageView.setImageDrawable(downloadedDrawable);
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

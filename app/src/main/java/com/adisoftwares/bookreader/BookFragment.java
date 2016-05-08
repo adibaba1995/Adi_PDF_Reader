@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +16,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v13.app.FragmentCompat;
 import android.support.v4.app.ActivityCompat;
@@ -36,13 +36,14 @@ import android.view.ViewGroup;
 import android.provider.MediaStore.Files;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
-import com.adisoftwares.bookreader.pdf.PDFBookData;
 import com.adisoftwares.bookreader.pdf.PdfViewActivity;
 import com.adisoftwares.bookreader.view.AutofitRecyclerView;
-
-import java.io.File;
-import java.util.ArrayList;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,16 +57,12 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
     private static final int REQUEST_READ_EXTERNAL_STORAGE = 0;
     private static final int FILES_LOADER = 0;
 
-    protected ArrayList<BookData> booksList;
-
     protected BooksAdapter adapter;
-
-    protected BookLoaderTask bookLoaderTask;
 
     protected View emptyView;
     private View errorView;
 
-    protected Cursor cursor = null;
+    protected Cursor cursor = null, filesCursor;
 
     private int scrollPosition;
 
@@ -77,8 +74,25 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
     FrameLayout recyclerViewContainer;
     @BindView(R.id.read_last)
     FloatingActionButton fab;
+    @BindView(R.id.coordinatorLayout)
+    CoordinatorLayout coordinatorLayout;
+    @BindView(R.id.ad_view)
+    AdView adView;
 
     private Unbinder unbinder;
+
+    private String bookName = null;
+
+    public interface SearchViewTextSubmitted {
+        public void submitText(String text);
+    }
+
+    private SearchViewTextSubmitted searchViewTextSubmitted;
+
+    public BookFragment setSearchViewTextSubmittedListener(SearchViewTextSubmitted searchViewTextSubmitted) {
+        this.searchViewTextSubmitted = searchViewTextSubmitted;
+        return this;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,9 +102,10 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(getString(R.string.book_list), booksList);
+    public void onStart() {
+        super.onStart();
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+            ((AppCompatActivity) getActivity()).getSupportLoaderManager().initLoader(FILES_LOADER, null, this);
     }
 
     @Nullable
@@ -100,14 +115,18 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
 
         unbinder = ButterKnife.bind(this, rootView);
 
-        if (savedInstanceState != null) {
-            booksList = savedInstanceState.getParcelableArrayList(getString(R.string.book_list));
-            Log.d("Aditya", "The size of list is " + booksList.size());
-        }
-        else
-            booksList = new ArrayList<>();
-
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            bookName = arguments.getString(getString(R.string.book_title));
+            if (bookName != null)
+                toolbar.setSubtitle(bookName);
+        }
+        if (arguments == null && bookName == null) {
+            bookName = "";
+            toolbar.setSubtitle(R.string.documents);
+        }
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             errorView = getActivity().getLayoutInflater().inflate(R.layout.book_error_view, recyclerView, false);
@@ -123,15 +142,15 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
 
         emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, recyclerView, false);
 
-        adapter = new BooksAdapter(getActivity(), booksList);
+        adapter = new BooksAdapter(getActivity(), null);
         recyclerView.setAdapter(adapter);
 //        recyclerView.setAdapter(adapter);
 
         adapter.setOnItemClickListener(new OnItemClickListener() {
                                            @Override
-                                           public void onItemClick(View view, int position) {
-                                               String path = booksList.get(position).getPath();
-                                               openBook(path);
+                                           public void onItemClick(int position) {
+                                               filesCursor.moveToPosition(position);
+                                               openBook(filesCursor.getString(filesCursor.getColumnIndex(Files.FileColumns.DATA)));
                                            }
                                        }
         );
@@ -139,8 +158,6 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             recyclerViewContainer.addView(errorView);
-        } else {
-            ((AppCompatActivity) getActivity()).getSupportLoaderManager().initLoader(FILES_LOADER, null, this);
         }
 
         ((NavigationViewActivity) getActivity()).enableNavigationDrawer(true, toolbar);
@@ -152,11 +169,43 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
             }
         });
 
-        if(!getActivity().getSharedPreferences(Preference.PREFERENCE_NAME, Context.MODE_PRIVATE).contains(Preference.LAST_READ_BOOK_PATH))
+        if (!getActivity().getSharedPreferences(Preference.PREFERENCE_NAME, Context.MODE_PRIVATE).contains(Preference.LAST_READ_BOOK_PATH))
             fab.setVisibility(View.INVISIBLE);
 
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                AdRequest adRequest = new AdRequest.Builder().build();
+                if (adView != null) {
+                    adView.loadAd(adRequest);
+                    adView.setAdListener(new AdListener() {
+                        @Override
+                        public void onAdLoaded() {
+                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(coordinatorLayout.getWidth(), coordinatorLayout.getHeight());
+                            params.setMargins(0, 0, 0, adView.getHeight());
+                            coordinatorLayout.setLayoutParams(params);
+                        }
+                    });
+                }
+            }
+        }, 5000);
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adView != null)
+            adView.resume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (adView != null)
+            adView.pause();
     }
 
     @Override
@@ -189,7 +238,8 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                BusStation.getBus().post(query);
+                if (searchViewTextSubmitted != null)
+                    searchViewTextSubmitted.submitText(query);
                 return true;
             }
 
@@ -206,9 +256,9 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
 
                 new Thread() {
                     public void run() {
-                        Uri uri = MediaStore.Files.getContentUri("external");
-                        String[] projection = null;
-                        String sortOrder = Files.FileColumns.DATA + " ASC";
+                        Uri uri = Files.getContentUri(getString(R.string.files_content_uri_external));
+                        String[] projection = {Files.FileColumns._ID, Files.FileColumns.DATA};
+                        String sortOrder = Files.FileColumns.TITLE + " ASC";
                         String selection = Files.FileColumns.MIME_TYPE + " = ? AND " + Files.FileColumns.DATA + " LIKE ?";
                         String[] selectionArgs = new String[]{getString(R.string.pdf_mime_type), "%/%" + newText + "%"};
                         cursor = getActivity().getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
@@ -230,7 +280,7 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
             intent.setAction(Intent.ACTION_VIEW);
             intent.setData(uri);
             Bundle bndlanimation =
-                    ActivityOptions.makeCustomAnimation(getActivity(), R.anim.silde_in_left,R.anim.slide_out_right).toBundle();
+                    ActivityOptions.makeCustomAnimation(getActivity(), R.anim.silde_in_left, R.anim.slide_out_right).toBundle();
             startActivity(intent, bndlanimation);
         }
     }
@@ -251,17 +301,11 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri uri = MediaStore.Files.getContentUri("external");
-        String[] projection = null;
-        String sortOrder = null;
+        Uri uri = MediaStore.Files.getContentUri(getString(R.string.files_content_uri_external));
+        String[] projection = {Files.FileColumns._ID, Files.FileColumns.DATA};
+        String sortOrder = Files.FileColumns.TITLE + " ASC";
         String selection = Files.FileColumns.MIME_TYPE + " = ? AND " + Files.FileColumns.DATA + " LIKE ?";
-        Bundle arguments = getArguments();
-        String bookName = null;
-        if (arguments != null)
-            bookName = args.getString(getString(R.string.book_title));
-        if (bookName == null)
-            bookName = "";
-        Log.d("Aditya", "Book name is " + bookName);
+
         String[] selectionArgs = new String[]{getString(R.string.pdf_mime_type), "%/%" + bookName + "%"};
         //String[] selectionArgs = new String[]{"%.pdf"};
 
@@ -271,8 +315,8 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        bookLoaderTask = new BookLoaderTask();
-        bookLoaderTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, data);
+        filesCursor = data;
+        adapter.swapCursor(data);
     }
 
     @Override
@@ -283,67 +327,27 @@ public class BookFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-//        if (bookLoaderTask != null)
-//            bookLoaderTask.cancel(true);
+        if (adView != null)
+            adView.destroy();
         unbinder.unbind();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
         ((AppCompatActivity) getActivity()).getSupportLoaderManager().destroyLoader(FILES_LOADER);
     }
 
-    public class BookLoaderTask extends AsyncTask<Cursor, Integer, Void> {
-
-        @Override
-        protected Void doInBackground(Cursor... params) {
-            BookData bookData;
-            Cursor data = params[0];
-            File book;
-            if (!data.isClosed() && data.isBeforeFirst()) {
-                booksList.clear();
-                while (data.moveToNext()) {
-//                    if (isCancelled()) {
-//                        break;
-//                    }
-                    bookData = null;
-                    book = new File(data.getString(data.getColumnIndex(Files.FileColumns.DATA)));
-                    try {
-                        if (book.isDirectory()) {
-                            continue;
-                        } else {
-                            if (book.getAbsolutePath().endsWith(".pdf"))
-                                bookData = new PDFBookData(data.getString(data.getColumnIndex(Files.FileColumns.DATA)));
-                            else
-                                continue;
-                            bookData.setId(data.getLong(data.getColumnIndex(Files.FileColumns._ID)));
-                            booksList.add(bookData);
-                            publishProgress(booksList.size() - 1);
-                        }
-                    } catch (Exception e) {
-                        Log.d("Aditya", e.toString());
-                    }
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            adapter.notifyItemInserted(values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            recyclerViewContainer.removeAllViews();
-            recyclerViewContainer.addView(recyclerView);
-            if (booksList.size() == 0) {
-                recyclerViewContainer.addView(emptyView);
-            }
-            recyclerView.scrollToPosition(scrollPosition);
-        }
+    public static BookFragment setSearchData(String searchData) {
+        BookFragment fragment = new BookFragment();
+        Bundle arguments = new Bundle();
+        arguments.putString(BookReaderApplication.getContext().getString(R.string.book_title), searchData);
+        fragment.setArguments(arguments);
+        return fragment;
     }
 }

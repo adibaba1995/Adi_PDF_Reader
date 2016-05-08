@@ -74,13 +74,11 @@ import butterknife.Unbinder;
 public class DriveFragment extends Fragment implements DriveAdapter.DriveItemSelected{
     GoogleAccountCredential mCredential;
     //    private TextView mOutputText;
-    ProgressDialog mProgress;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     static final int REQUEST_READ_ACCOUNTS = 1003;
-    private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = { DriveScopes.DRIVE_READONLY };
     private ArrayList<File> fileList;
 
@@ -116,15 +114,13 @@ public class DriveFragment extends Fragment implements DriveAdapter.DriveItemSel
         driveRecyclerView.setAdapter(adapter);
         adapter.setDriveItemSelectedListener(this);
         driveRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
-        mProgress = new ProgressDialog(getActivity());
-        mProgress.setMessage("Calling Drive API ...");
 
         // Initialize credentials and service object.
         SharedPreferences settings = BookReaderApplication.getContext().getSharedPreferences(Preference.PREFERENCE_NAME, Context.MODE_PRIVATE);
         mCredential = GoogleAccountCredential.usingOAuth2(
                 BookReaderApplication.getContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff())
-                .setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
+                .setSelectedAccountName(settings.getString(getString(R.string.pref_account_name), null));
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.GET_ACCOUNTS)
                 != PackageManager.PERMISSION_GRANTED) {
             emptyView = getActivity().getLayoutInflater().inflate(R.layout.book_error_view, null);
@@ -207,15 +203,15 @@ public class DriveFragment extends Fragment implements DriveAdapter.DriveItemSel
                         SharedPreferences settings =
                                 BookReaderApplication.getContext().getSharedPreferences(Preference.PREFERENCE_NAME, Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = settings.edit();
-                        editor.putString(PREF_ACCOUNT_NAME, accountName);
+                        editor.putString(getString(R.string.pref_account_name), accountName);
                         editor.apply();
                     }
                     refreshResults();
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     emptyView = getActivity().getLayoutInflater().inflate(R.layout.book_error_view, null);
-                    ((TextView)emptyView.findViewById(R.id.error_text)).setText("Account unspecified");
+                    ((TextView)emptyView.findViewById(R.id.error_text)).setText(R.string.account_unspecified);
                     Button errorButton = (Button)emptyView.findViewById(R.id.error_button);
-                    errorButton.setText("Try again");
+                    errorButton.setText(R.string.try_again);
                     errorButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -250,7 +246,7 @@ public class DriveFragment extends Fragment implements DriveAdapter.DriveItemSel
                 emptyView = getActivity().getLayoutInflater().inflate(R.layout.book_error_view, null);
                 ((TextView)emptyView.findViewById(R.id.error_text)).setText(R.string.no_network_connection);
                 Button errorButton = (Button)emptyView.findViewById(R.id.error_button);
-                errorButton.setText("Try again");
+                errorButton.setText(R.string.try_again);
                 errorButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -329,7 +325,7 @@ public class DriveFragment extends Fragment implements DriveAdapter.DriveItemSel
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
             mService = new com.google.api.services.drive.Drive.Builder(
                     transport, jsonFactory, credential)
-                    .setApplicationName("Adi Book Reader")
+                    .setApplicationName(getString(R.string.app_name))
                     .build();
         }
 
@@ -342,7 +338,6 @@ public class DriveFragment extends Fragment implements DriveAdapter.DriveItemSel
             try {
                 getDataFromApi();
             } catch (Exception e) {
-                Log.d("Aditya", e.getStackTrace().toString());
                 mLastError = e;
                 cancel(true);
                 return null;
@@ -359,9 +354,9 @@ public class DriveFragment extends Fragment implements DriveAdapter.DriveItemSel
         private void getDataFromApi() throws IOException {
             // Get a list of up to 10 files.
             FileList result = mService.files().list()
-                    .setQ("mimeType='application/pdf'")
-                    .setSpaces("drive")
-                    .setFields("nextPageToken, files(id, name)")
+                    .setQ(getString(R.string.drive_query))
+                    .setSpaces(getString(R.string.drive_spaces))
+                    .setFields(getString(R.string.drive_fields))
                     .execute();
             List<File> files = result.getFiles();
             if (files != null) {
@@ -388,7 +383,6 @@ public class DriveFragment extends Fragment implements DriveAdapter.DriveItemSel
 
         @Override
         protected void onCancelled() {
-            mProgress.hide();
             if (mLastError != null) {
                 if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
                     showGooglePlayServicesAvailabilityErrorDialog(
@@ -399,81 +393,30 @@ public class DriveFragment extends Fragment implements DriveAdapter.DriveItemSel
                             ((UserRecoverableAuthIOException) mLastError).getIntent(),
                             REQUEST_AUTHORIZATION);
                 } else {
-                    Log.d("Aditya", mLastError.toString());
                     driveContainer.removeAllViews();
                     emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, null);
                     TextView emptyTextView = (TextView)emptyView.findViewById(R.id.empty_text);
                     emptyTextView.setTextColor(getResources().getColor(android.R.color.black));
-                    emptyTextView.setText("The following error occurred:\n" + mLastError.getMessage());
+                    emptyTextView.setText(R.string.some_error);
                     driveContainer.addView(emptyView);
                 }
             } else {
                 emptyView = getActivity().getLayoutInflater().inflate(R.layout.empty_view, null);
                 TextView emptyTextView = (TextView)emptyView.findViewById(R.id.empty_text);
                 emptyTextView.setTextColor(getResources().getColor(android.R.color.black));
-                emptyTextView.setText("Request cancelled.");
+                emptyTextView.setText(R.string.request_cancelled);
                 driveContainer.addView(emptyView);
 //                mOutputText.setText("Request cancelled.");
             }
         }
     }
 
-    public class DownloadFileTask extends AsyncTask<File, Void, Void> {
-        private com.google.api.services.drive.Drive mService = null;
-        private Exception mLastError = null;
-        private ProgressDialog downloadDialogue;
-
-        public DownloadFileTask(Context context) {
-
-            HttpTransport transport = AndroidHttp.newCompatibleTransport();
-            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-            mService = new com.google.api.services.drive.Drive.Builder(
-                    transport, jsonFactory, mCredential)
-                    .setApplicationName("Adi Book Reader")
-                    .build();
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            downloadDialogue = new ProgressDialog(getActivity());
-            downloadDialogue.setMessage(getString(R.string.downloading));
-            downloadDialogue.show();
-        }
-
-        @Override
-        protected Void doInBackground(File... params) {
-            try {
-                OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/" + params[0].getName()));
-                mService.files().get(params[0].getId()).executeMediaAndDownloadTo(outputStream);
-                String paths[] = {Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath() + "/" + params[0].getName()};
-                String mimeTypes[] = {"application/pdf"};
-                MediaScannerConnection.scanFile(getActivity(), paths, mimeTypes, null);
-                outputStream.close();
-//                mService.files().export(params[0].getId(), "application/pdf")
-//                        .executeMediaAndDownloadTo(outputStream);
-            } catch (FileNotFoundException e) {
-
-            } catch (IOException e) {
-
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            downloadDialogue.dismiss();
-        }
-    }
-
     @Override
     public void onDriveItemSelected(int position) {
         Intent intent = new Intent(getActivity(), DownloadService.class);
-        intent.putExtra(DownloadService.FILE_NAME, fileList.get(position).getName());
-        intent.putExtra(DownloadService.FILE_ID, fileList.get(position).getId());
+        intent.putExtra(getString(R.string.google_drive_file_name), fileList.get(position).getName());
+        intent.putExtra(getString(R.string.google_drive_file_id), fileList.get(position).getId());
         getActivity().startService(intent);
-//        new DownloadFileTask(BookReaderApplication.getContext()).execute(fileList.get(position));
     }
 
     @Override
