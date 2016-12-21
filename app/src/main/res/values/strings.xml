@@ -51,9 +51,6 @@
     <string name="nanohttpd_html" translatable="false"><![CDATA[<div class=\'img\'><a href=\'%1$s\' target=\'_blank\'><img src=\'%2$s\' width=\'300\'\' height=\'200\'></a><div class=\'desc\'>%3$s</div></div>]]></string>
     <string name="nanohttpd_file_query_parameter" translatable="false">file</string>
     <string name="bitmap_mime_type" translatable="false">image/bmp</string>
-    <string name="wifi_sharing_share_button_state" translatable="false">com.adisoftwares.bookreader.wifi_sharing.share_button_state</string>
-    <string name="wifi_sharing_server" translatable="false">com.adisoftwares.bookreader.wifi_sharing.server</string>
-    <string name="wifi_sharing_ip" translatable="false">com.adisoftwares.bookreader.wifi_sharing.ip</string>
     <string name="wifi_sharing_ip_address_view" translatable="false">http://%1$s:%2$s</string>
 
     <string name="drive">Google Drive</string>
@@ -178,5 +175,6 @@
     <string name="preference_last_read_book_path" translatable="false">book_path</string>
     <string name="permission_denied">Permission denied</string>
     <string name="no_bookmarks">There are no bookmarks added</string>
+    <string name="no_recently_read">There are no recently read pdf files</string>
 
 </resources>

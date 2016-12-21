@@ -24,9 +24,5 @@
                 android:id="@+id/wifi"
                 android:icon="@drawable/wifi"
                 android:title="@string/wifi" />
-            <item
-                android:id="@+id/drive"
-                android:icon="@drawable/drive"
-                android:title="@string/drive" />
         </group>
 </menu>

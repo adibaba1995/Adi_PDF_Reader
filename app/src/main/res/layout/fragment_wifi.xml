@@ -1,71 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-android:id="@+id/coordinatorLayout"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:background="@android:color/white">
-
-<android.support.design.widget.AppBarLayout
-    android:id="@+id/appBarLayout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:layout_scrollFlags="scroll|enterAlways" />
-
-</android.support.design.widget.AppBarLayout>
-
-<FrameLayout
-    android:id="@+id/drive_container"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    android:background="@android:color/white">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:orientation="vertical"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <TextView
-            android:layout_margin="16dp"
-            android:id="@+id/ip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:contentDescription="@string/ip_address_content_desc"/>
-
-        <ImageView
+        <FrameLayout
+            android:id="@+id/drive_container"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            app:srcCompat="@drawable/wifi_direct"
-            android:contentDescription="@string/wifi_sharing"/>
-
-        <Button
-            android:id="@+id/enable_share"
-            android:layout_margin="16dp"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/enable_share"
-            android:contentDescription="@string/enable_share"/>
+            android:layout_gravity="center">
 
-        <TextView
-            android:layout_margin="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sharing_instruction"
-            android:gravity="center"
-            android:textColor="@android:color/black"
-            android:contentDescription="@string/sharing_instruction"/>
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/ip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:contentDescription="@string/ip_address_content_desc"
+                    android:textColor="@android:color/black" />
 
-</FrameLayout>
+                <ImageView
+                    android:id="@+id/qrcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/qrcode_height"
+                    android:contentDescription="@string/wifi_sharing"
+                    app:srcCompat="@drawable/wifi_direct" />
+
+                <Button
+                    android:id="@+id/enable_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:contentDescription="@string/enable_share"
+                    android:text="@string/enable_share" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:contentDescription="@string/sharing_instruction"
+                    android:gravity="center"
+                    android:text="@string/sharing_instruction"
+                    android:textColor="@android:color/black" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </ScrollView>
 
 </android.support.design.widget.CoordinatorLayout>

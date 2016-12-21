@@ -13,7 +13,7 @@
         android:minHeight="?attr/actionBarSize"
         app:popupTheme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
-    <com.adisoftwares.bookreader.view.ObservableListView
+    <com.adisoftwares.bookreader.pdf.reader.books.view.ObservableListView
         android:id="@+id/listView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

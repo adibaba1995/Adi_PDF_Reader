@@ -18,4 +18,8 @@
         <item name="android:listDivider">@color/lightGrey</item>
     </style>
 
+    <style name="FlatButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">@color/accent</item>
+    </style>
+
 </resources>
