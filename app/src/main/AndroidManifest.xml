@@ -18,6 +18,7 @@
 
     <application
         android:name=".BookReaderApplication"
+        android:icon="@mipmap/ic_launcher"
         android:allowBackup="true"
         android:label="@string/app_name"
         android:supportsRtl="true"
